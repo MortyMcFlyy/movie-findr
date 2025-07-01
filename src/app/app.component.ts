@@ -7,13 +7,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   public appPages = [
-    { title: 'Inbox', url: '/folder/inbox', icon: 'mail' },
-    { title: 'Outbox', url: '/folder/outbox', icon: 'paper-plane' },
-    { title: 'Favorites', url: '/folder/favorites', icon: 'heart' },
-    { title: 'Archived', url: '/folder/archived', icon: 'archive' },
-    { title: 'Trash', url: '/folder/trash', icon: 'trash' },
-    { title: 'Spam', url: '/folder/spam', icon: 'warning' },
+    { title: 'Filme suchen', url: '/search', icon: 'search' },
+    { title: 'Favoriten', url: '/favorites', icon: 'heart' },
+    { title: 'Entdecke', url: '/discover', icon: 'film' },
+    { title: 'Verlauf', url: '/history', icon: 'time' }
   ];
-  public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
+  public labels = ['Action', 'Komödie', 'Drama', 'Science Fiction', 'Horror', 'Animation'];
   constructor() {}
 }
