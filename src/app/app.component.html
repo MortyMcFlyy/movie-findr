@@ -19,11 +19,13 @@
         <ion-list id="labels-list">
           <ion-list-header>Genres</ion-list-header>
 
-          @for (label of labels; track label) {
-            <ion-item lines="none">
-              <ion-icon aria-hidden="true" slot="start" ios="bookmark-outline" md="bookmark-sharp"></ion-icon>
-              <ion-label>{{ label }}</ion-label>
-            </ion-item>
+          @for (genre of genres; track genre) {
+            <ion-menu-toggle auto-hide="false">
+              <ion-item lines="none" button (click)="searchByGenre(genre.id, genre.name)">
+                <ion-icon aria-hidden="true" slot="start" ios="bookmark-outline" md="bookmark-sharp"></ion-icon>
+                <ion-label>{{ genre.name }}</ion-label>
+              </ion-item>
+            </ion-menu-toggle>
           }
         </ion-list>
       </ion-content>

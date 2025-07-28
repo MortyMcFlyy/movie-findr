@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -12,6 +14,26 @@ export class AppComponent {
     { title: 'VibeSearching', url: '/vibesearching', icon: 'film' },
     { title: 'Verlauf', url: '/history', icon: 'time' }
   ];
-  public labels = ['Action', 'Komödie', 'Drama', 'Science Fiction', 'Horror', 'Animation'];
-  constructor() {}
+  
+  // Genre labels with their corresponding TMDB genre IDs
+  public genres = [
+    { name: 'Action', id: 28 },
+    { name: 'Komödie', id: 35 },
+    { name: 'Drama', id: 18 },
+    { name: 'Science Fiction', id: 878 },
+    { name: 'Horror', id: 27 },
+    { name: 'Animation', id: 16 }
+  ];
+
+  constructor(private router: Router) {}
+  
+  // Navigate to genre search
+  searchByGenre(genreId: number, genreName: string) {
+    this.router.navigate(['/search'], { 
+      queryParams: { 
+        genre: genreId,
+        name: genreName
+      }
+    });
+  }
 }

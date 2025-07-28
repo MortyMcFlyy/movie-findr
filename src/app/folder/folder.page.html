@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Filme suchen</ion-title>
+    <ion-title>{{ currentGenreName ? 'Genre: ' + currentGenreName : 'Filme suchen' }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -13,8 +13,15 @@
     <ion-button (click)="search()">Suchen</ion-button>
   </ion-item>
 
-  <div class="ion-padding" *ngIf="movies.length === 0">
+  <div class="ion-padding" *ngIf="movies.length === 0 && !currentGenreId">
     <p>Suche nach Filmen, um Ergebnisse zu sehen.</p>
+  </div>
+
+  <div class="ion-padding" *ngIf="currentGenreId">
+    <ion-chip color="primary">
+      <ion-label>{{ currentGenreName }}</ion-label>
+      <ion-icon name="close-circle" (click)="currentGenreId = null; movies = []"></ion-icon>
+    </ion-chip>
   </div>
 
   <ion-grid>
