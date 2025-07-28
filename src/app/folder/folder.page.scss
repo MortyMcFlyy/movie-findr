@@ -26,3 +26,24 @@ ion-menu-button {
 #container a {
   text-decoration: none;
 }
+
+.movie-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.movie-overview {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  text-align: justify;
+  line-height: 1.4;
+}
+
+ion-card img {
+  max-height: 350px;
+  object-fit: cover;
+}
