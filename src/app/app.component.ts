@@ -9,7 +9,7 @@ export class AppComponent {
   public appPages = [
     { title: 'Filme suchen', url: '/search', icon: 'search' },
     { title: 'Favoriten', url: '/favorites', icon: 'heart' },
-    { title: 'Entdecke', url: '/discover', icon: 'film' },
+    { title: 'VibeSearching', url: '/vibesearching', icon: 'film' },
     { title: 'Verlauf', url: '/history', icon: 'time' }
   ];
   public labels = ['Action', 'Komödie', 'Drama', 'Science Fiction', 'Horror', 'Animation'];
