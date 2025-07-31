@@ -74,7 +74,7 @@ export class MovieService {
   // Entdecken-Funktion mit Filtern
   discoverMovies(options: { 
     year?: number, 
-    genre?: number, 
+    with_genres?: number, 
     sortBy?: string,
     withCast?: string,
     withCrew?: string,
