@@ -13,11 +13,12 @@ export class MovieService {
   constructor(private http: HttpClient) {}
 
   // Filme
-  searchMovies(query: string): Observable<any> {
+  searchMovies(query: string, page: number = 1): Observable<any> {
     return this.http.get(`${this.baseUrl}/search/movie`, {
       params: {
         api_key: this.apiKey,
-        query: query
+        query: query,
+        page: page.toString()
       }
     });
   }
@@ -41,21 +42,30 @@ export class MovieService {
   }
   
   // Trend- und Sammlungsendpunkte
-  getTrendingMovies(timeWindow: 'day' | 'week' = 'week'): Observable<any> {
+  getTrendingMovies(timeWindow: 'day' | 'week' = 'week', page: number = 1): Observable<any> {
     return this.http.get(`${this.baseUrl}/trending/movie/${timeWindow}`, {
-      params: { api_key: this.apiKey }
+      params: { 
+        api_key: this.apiKey,
+        page: page.toString()
+      }
     });
   }
   
-  getPopularMovies(): Observable<any> {
+  getPopularMovies(page: number = 1): Observable<any> {
     return this.http.get(`${this.baseUrl}/movie/popular`, {
-      params: { api_key: this.apiKey }
+      params: { 
+        api_key: this.apiKey,
+        page: page.toString()
+      }
     });
   }
   
-  getTopRatedMovies(): Observable<any> {
+  getTopRatedMovies(page: number = 1): Observable<any> {
     return this.http.get(`${this.baseUrl}/movie/top_rated`, {
-      params: { api_key: this.apiKey }
+      params: { 
+        api_key: this.apiKey,
+        page: page.toString()
+      }
     });
   }
   
@@ -78,9 +88,14 @@ export class MovieService {
     sortBy?: string,
     withCast?: string,
     withCrew?: string,
-    voteAverageGte?: number
+    voteAverageGte?: number,
+    page?: number
   } = {}): Observable<any> {
-    const params = { api_key: this.apiKey, ...options };
+    const params = { 
+      api_key: this.apiKey, 
+      page: options.page?.toString() || '1',
+      ...options 
+    };
     return this.http.get(`${this.baseUrl}/discover/movie`, { params });
   }
   

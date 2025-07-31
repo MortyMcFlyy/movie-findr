@@ -17,13 +17,13 @@
         </ion-list>
 
         <ion-list id="labels-list">
-          <ion-list-header>Genres</ion-list-header>
+          <ion-list-header>Kategorien</ion-list-header>
 
-          @for (genre of genres; track genre) {
+          @for (category of categories; track category) {
             <ion-menu-toggle auto-hide="false">
-              <ion-item lines="none" button (click)="searchByGenre(genre.id, genre.name)">
+              <ion-item lines="none" button (click)="searchByCategory(category)">
                 <ion-icon aria-hidden="true" slot="start" ios="bookmark-outline" md="bookmark-sharp"></ion-icon>
-                <ion-label>{{ genre.name }}</ion-label>
+                <ion-label>{{ category.name }}</ion-label>
               </ion-item>
             </ion-menu-toggle>
           }

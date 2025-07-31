@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>{{ currentGenreName ? 'Genre: ' + currentGenreName : 'Filme suchen' }}</ion-title>
+    <ion-title>{{ currentGenreName ? currentGenreName : 'Filme suchen' }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -17,10 +17,14 @@
     <p>Suche nach Filmen, um Ergebnisse zu sehen.</p>
   </div>
 
-  <div class="ion-padding" *ngIf="currentGenreId">
+ <div class="ion-padding" *ngIf="movies.length === 0 && !currentGenreId && !currentCategoryId">
+    <p>Suche nach Filmen, um Ergebnisse zu sehen.</p>
+  </div>
+
+  <div class="ion-padding" *ngIf="currentGenreId || currentCategoryId">
     <ion-chip color="primary">
       <ion-label>{{ currentGenreName }}</ion-label>
-      <ion-icon name="close-circle" (click)="currentGenreId = null; movies = []"></ion-icon>
+      <ion-icon name="close-circle" (click)="currentGenreId = null; currentCategoryId = null; movies = []"></ion-icon>
     </ion-chip>
   </div>
 
@@ -44,4 +48,11 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMoreData($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Weitere Filme werden geladen...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 </ion-content>
