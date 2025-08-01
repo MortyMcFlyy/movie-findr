@@ -13,27 +13,71 @@
     <ion-button (click)="search()">Suchen</ion-button>
   </ion-item>
 
-  <div class="ion-padding" *ngIf="movies.length === 0 && !currentGenreId">
+  <div class="ion-padding" *ngIf="movies.length === 0 && !currentGenreId && !currentCategoryId">
     <p>Suche nach Filmen, um Ergebnisse zu sehen.</p>
   </div>
 
- <div class="ion-padding" *ngIf="movies.length === 0 && !currentGenreId && !currentCategoryId">
-    <p>Suche nach Filmen, um Ergebnisse zu sehen.</p>
+  <ion-item lines="none">
+    <ion-label>Filter</ion-label>
+    <ion-button fill="outline" expand="block" (click)="openFilterPopover($event)">
+      Öffnen
+    </ion-button>
+  </ion-item>
+
+  <div class="ion-padding" *ngIf="currentGenreId || currentCategoryId || hasActiveFilters()">
+    <!-- Kategorie/Gerne-Chip -->
+    <ion-chip color="primary" *ngIf="currentGenreName">
+      <ion-label>{{ currentGenreName }}</ion-label>
+      <ion-icon name="close-circle" (click)="clearGenreOrCategory()"></ion-icon>
+    </ion-chip>
+
+    <!-- Dynamische Filter-Chips -->
+    <ion-chip color="secondary" *ngIf="filterState.runtime">
+      <ion-label>Filmlänge: {{ displayRuntime(filterState.runtime) }}</ion-label>
+      <ion-icon name="close-circle" (click)="clearSingleFilter('runtime')"></ion-icon>
+    </ion-chip>
+
+    <ion-chip color="secondary" *ngIf="filterState.rating">
+      <ion-label>Rating: ab {{ filterState.rating }}</ion-label>
+      <ion-icon name="close-circle" (click)="clearSingleFilter('rating')"></ion-icon>
+    </ion-chip>
+
+    <ion-chip color="secondary" *ngIf="filterState.voteCount">
+      <ion-label>Min. Votes: {{ filterState.voteCount }}</ion-label>
+      <ion-icon name="close-circle" (click)="clearSingleFilter('voteCount')"></ion-icon>
+    </ion-chip>
+
+    <ion-chip color="secondary" *ngIf="filterState.language">
+      <ion-label>Sprache: {{ displayLanguage(filterState.language) }}</ion-label>
+      <ion-icon name="close-circle" (click)="clearSingleFilter('language')"></ion-icon>
+    </ion-chip>
+
+    <ion-chip color="secondary" *ngIf="filterState.decade">
+      <ion-label>Jahrzehnt: {{ displayDecade(filterState.decade) }}</ion-label>
+      <ion-icon name="close-circle" (click)="clearSingleFilter('decade')"></ion-icon>
+    </ion-chip>
+
+    <ion-chip color="medium" *ngIf="hasActiveFilters()" (click)="clearAllFilters()">
+      <ion-icon name="close-circle"></ion-icon>
+      <ion-label>Alle Filter entfernen</ion-label>
+    </ion-chip>
+
   </div>
 
-  <div class="ion-padding" *ngIf="currentGenreId || currentCategoryId">
+  <!-- <div class="ion-padding" *ngIf="currentGenreId || currentCategoryId">
     <ion-chip color="primary">
       <ion-label>{{ currentGenreName }}</ion-label>
       <ion-icon name="close-circle" (click)="currentGenreId = null; currentCategoryId = null; movies = []"></ion-icon>
     </ion-chip>
-  </div>
+  </div> -->
 
   <ion-grid>
     <ion-row>
       <ion-col size="12" size-md="6" size-lg="4" *ngFor="let movie of movies">
         <ion-card class="movie-card">
-          <img [src]="movie.poster_path ? 'https://image.tmdb.org/t/p/w300' + movie.poster_path : 'assets/images/movie-placeholder.jpg'" 
-               alt="{{movie.title}}"/>
+          <img
+            [src]="movie.poster_path ? 'https://image.tmdb.org/t/p/w300' + movie.poster_path : 'assets/images/movie-placeholder.jpg'"
+            alt="{{movie.title}}" />
           <ion-card-header>
             <ion-card-title>{{movie.title}}</ion-card-title>
             <ion-card-subtitle *ngIf="movie.release_date">{{movie.release_date | date:'yyyy'}}</ion-card-subtitle>
@@ -50,9 +94,7 @@
   </ion-grid>
 
   <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMoreData($event)">
-    <ion-infinite-scroll-content
-      loadingSpinner="bubbles"
-      loadingText="Weitere Filme werden geladen...">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Weitere Filme werden geladen...">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
 </ion-content>

@@ -1,0 +1,52 @@
+<ion-list>
+
+    <ion-item>
+        <ion-label>Filmlänge</ion-label>
+        <ion-select [value]="filters.runtime" (ionChange)="updateFilter('runtime', $event.detail.value)">
+            <ion-select-option value="<90">
+                < 90 min</ion-select-option>
+                    <ion-select-option value="90-120">90–120 min</ion-select-option>
+                    <ion-select-option value=">120">> 120 min</ion-select-option>
+        </ion-select>
+    </ion-item>
+
+    <ion-item>
+        <ion-label>Bewertung</ion-label>
+        <ion-select [value]="filters.rating" (ionChange)="updateFilter('rating', $event.detail.value)">
+            <ion-select-option value="6.0">ab 6.0</ion-select-option>
+            <ion-select-option value="7.5">ab 7.5</ion-select-option>
+            <ion-select-option value="9.0">ab 9.0</ion-select-option>
+        </ion-select>
+    </ion-item>
+
+    <ion-item>
+        <ion-label position="stacked">Min. Bewertungen</ion-label>
+        <ion-input type="number" [value]="filters.voteCount"
+            (ionInput)="updateFilter('voteCount', $event.target.value)">
+        </ion-input>
+    </ion-item>
+
+    <ion-item>
+        <ion-label>Jahrzehnt</ion-label>
+        <ion-select [value]="filters.decade" (ionChange)="updateFilter('decade', $event.detail.value)">
+            <ion-select-option value="2020">2020er</ion-select-option>
+            <ion-select-option value="2010">2010er</ion-select-option>
+            <ion-select-option value="2000">2000er</ion-select-option>
+            <ion-select-option value="1990">1990er</ion-select-option>
+            <ion-select-option value="1980">1980er</ion-select-option>
+            <ion-select-option value="older">Älter</ion-select-option>
+        </ion-select>
+    </ion-item>
+
+    <ion-item>
+        <ion-label>Sprache</ion-label>
+        <ion-select [value]="filters.language" (ionChange)="updateFilter('language', $event.detail.value)">
+            <ion-select-option value="de">Deutsch</ion-select-option>
+            <ion-select-option value="en">Englisch</ion-select-option>
+        </ion-select>
+    </ion-item>
+
+    <ion-button expand="block" color="primary" (click)="popoverController.dismiss()">
+        Filter anwenden
+    </ion-button>
+</ion-list>
