@@ -82,20 +82,28 @@ export class MovieService {
   }
 
   // Entdecken-Funktion mit Filtern
-  discoverMovies(options: { 
-    year?: number, 
-    with_genres?: number, 
-    sortBy?: string,
-    withCast?: string,
-    withCrew?: string,
-    voteAverageGte?: number,
-    page?: number
-  } = {}): Observable<any> {
-    const params = { 
-      api_key: this.apiKey, 
-      page: options.page?.toString() || '1',
-      ...options 
-    };
+  discoverMovies(options: any = {}): Observable<any> {
+    // Parameter für die TMDB API anpassen
+    const params: any = { api_key: this.apiKey };
+    
+    // Basis-Parameter
+    if (options.with_genres) params.with_genres = options.with_genres;
+    if (options.sort_by) params.sort_by = options.sort_by;
+    if (options.page) params.page = options.page;
+    
+    // Bewertungsparameter - korrekte Namen mit Punkten verwenden!
+    if (options.vote_average_gte) params['vote_average.gte'] = options.vote_average_gte;
+    if (options.vote_average_lte) params['vote_average.lte'] = options.vote_average_lte;
+    if (options.vote_count_gte) params['vote_count.gte'] = options.vote_count_gte;
+    
+    // Laufzeitparameter
+    if (options.with_runtime_gte) params['with_runtime.gte'] = options.with_runtime_gte;
+    if (options.with_runtime_lte) params['with_runtime.lte'] = options.with_runtime_lte;
+    
+    // Datumsparameter
+    if (options.primary_release_date_gte) params.primary_release_date_gte = options.primary_release_date_gte;
+    if (options.primary_release_date_lte) params.primary_release_date_lte = options.primary_release_date_lte;
+    
     return this.http.get(`${this.baseUrl}/discover/movie`, { params });
   }
   
