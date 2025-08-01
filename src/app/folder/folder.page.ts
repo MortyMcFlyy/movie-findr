@@ -68,6 +68,7 @@ export class FolderPage implements OnInit {
 
     this.movieService.searchMovies(this.searchTerm).subscribe((res: any) => {
       this.movies = res.results;
+      this.loadProvidersForMovies();
     });
   }
 
@@ -195,6 +196,8 @@ export class FolderPage implements OnInit {
     } else {
       event.target.complete();
     }
+
+    this.loadProvidersForMovies();
   }
 
   async openFilterPopover(ev: Event) {
@@ -376,6 +379,34 @@ export class FolderPage implements OnInit {
       delete this.filterState[key];
     }
     this.applyFilters();
+  }
+
+  loadProvidersForMovies() {
+    this.movies.forEach(movie => {
+      if (movie.id && !movie.providers) {
+        // Only fetch if we have an ID and haven't already loaded providers
+        this.movieService.getProviders(movie.id).subscribe(
+          response => {
+            // The API returns providers by country, we'll use US or fallback to first available
+            const results = response.results || {};
+            const countryData = results['US'] || results[Object.keys(results)[0]];
+            
+            // Get flatrate (streaming) providers if available
+            if (countryData && countryData.flatrate) {
+              movie.providers = countryData.flatrate.slice(0, 5); // Limit to 5 providers
+            } else if (countryData && countryData.rent) {
+              movie.providers = countryData.rent.slice(0, 5); // Fallback to rent options
+            } else {
+              movie.providers = []; // No providers available
+            }
+          },
+          error => {
+            console.error(`Error fetching providers for movie ${movie.id}:`, error);
+            movie.providers = []; // Set empty array on error
+          }
+        );
+      }
+    });
   }
 
 }

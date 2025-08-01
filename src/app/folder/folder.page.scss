@@ -47,3 +47,29 @@ ion-card img {
   max-height: 350px;
   object-fit: cover;
 }
+
+.provider-section {
+  margin-top: 10px;
+  border-top: 1px solid var(--ion-color-light);
+  padding-top: 5px;
+}
+
+.provider-title {
+  font-size: 12px;
+  color: var(--ion-color-medium);
+  margin-bottom: 5px;
+  display: block;
+}
+
+.provider-logos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.provider-logo {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  object-fit: contain;
+}

@@ -144,6 +144,13 @@ export class MovieService {
   }
 
 
+  //Provider
+  getProviders(movieId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/movie/${movieId}/watch/providers`, {
+      params: { api_key: this.apiKey, include_adult: false }
+    });
+  }
+
   // Genre-Listen
   getMovieGenres(): Observable<any> {
     return this.http.get(`${this.baseUrl}/genre/movie/list`, {
