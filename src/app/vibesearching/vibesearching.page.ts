@@ -146,7 +146,7 @@ export class VibesearchingPage implements OnInit {
     console.log('API-Parameter:', discoverParams);
     
     // API-Aufruf mit den erstellten Parametern
-    this.movieService.discoverMovies(discoverParams).subscribe(
+    this.movieService.discoverVibesearchMovies(discoverParams).subscribe(
       (res) => {
         if (res.results && res.results.length > 0) {
           // Erfolgsfall: Zufällig 6 Filme auswählen
