@@ -14,6 +14,7 @@
       <h2>Welchen Vibe soll dein Film haben?</h2>
       
       <div class="button-container">
+        <!-- Bestehende Buttons bleiben unverändert -->
         <ion-button expand="block" color="success" (click)="selectMood('happy')" class="vibe-button">
           <div class="button-content">
             <ion-icon name="happy-outline" size="large"></ion-icon>
@@ -41,6 +42,28 @@
             <div>Horror</div>
           </div>
         </ion-button>
+        
+        <!-- Neue Buttons für die fehlenden Stimmungen -->
+        <ion-button expand="block" color="danger" (click)="selectMood('action')" class="vibe-button">
+          <div class="button-content">
+            <ion-icon name="flame-outline" size="large"></ion-icon>
+            <div>Action</div>
+          </div>
+        </ion-button>
+        
+        <ion-button expand="block" color="secondary" (click)="selectMood('love')" class="vibe-button">
+          <div class="button-content">
+            <ion-icon name="heart-outline" size="large"></ion-icon>
+            <div>Romantik</div>
+          </div>
+        </ion-button>
+        
+        <ion-button expand="block" color="primary" (click)="selectMood('music')" class="vibe-button">
+          <div class="button-content">
+            <ion-icon name="musical-notes-outline" size="large"></ion-icon>
+            <div>Musik</div>
+          </div>
+        </ion-button>
 
         <ion-button expand="block" color="medium" (click)="selectMood('documentary')" class="vibe-button">
           <div class="button-content">
@@ -51,22 +74,43 @@
       </div>
     </div>
     
-    <!-- Neuer Schritt 2: Komplexität auswählen -->
+    <!-- Schritt 2: Filmdauer auswählen -->
     <div *ngIf="currentStep === 2" class="question-container" [class.fade-in]="!isAnimating">
-      <h2>Was für ein Film soll es sein?</h2>
+      <h2>Wie lang darf der Film sein?</h2>
       
       <div class="button-container">
-        <ion-button expand="block" color="medium" (click)="selectComplexity('challenging')" class="vibe-button">
+        <ion-button expand="block" color="tertiary" (click)="selectDuration('shortfilm')" class="vibe-button">
           <div class="button-content">
-            <ion-icon name="glasses-outline" size="large"></ion-icon>
-            <div>Anspruchsvoll</div>
+            <ion-icon name="stopwatch-outline" size="large"></ion-icon>
+            <div>Kurzfilm (<40 Min)</div>
           </div>
         </ion-button>
         
-        <ion-button expand="block" color="light" (click)="selectComplexity('easy')" class="vibe-button">
+        <ion-button expand="block" color="medium" (click)="selectDuration('short')" class="vibe-button">
           <div class="button-content">
-            <ion-icon name="film-outline" size="large"></ion-icon>
-            <div>Leichte Kost</div>
+            <ion-icon name="hourglass-outline" size="large"></ion-icon>
+            <div>Kurz (40-90 Min)</div>
+          </div>
+        </ion-button>
+        
+        <ion-button expand="block" color="primary" (click)="selectDuration('normal')" class="vibe-button">
+          <div class="button-content">
+            <ion-icon name="time-outline" size="large"></ion-icon>
+            <div>Normal (90-120 Min)</div>
+          </div>
+        </ion-button>
+        
+        <ion-button expand="block" color="secondary" (click)="selectDuration('extended')" class="vibe-button">
+          <div class="button-content">
+            <ion-icon name="calendar-outline" size="large"></ion-icon>
+            <div>Überlänge (>120 Min)</div>
+          </div>
+        </ion-button>
+        
+        <ion-button expand="block" color="light" (click)="selectDuration('any')" class="vibe-button">
+          <div class="button-content">
+            <ion-icon name="infinite-outline" size="large"></ion-icon>
+            <div>Egal</div>
           </div>
         </ion-button>
       </div>
