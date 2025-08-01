@@ -170,6 +170,7 @@ export class FolderPage implements OnInit {
         }
       }
 
+      // Genre-ID setzen, wenn vorhanden
       if (this.currentGenreId) {
         options.with_genres = this.currentGenreId;
       }
@@ -226,52 +227,87 @@ export class FolderPage implements OnInit {
       include_adult: false
     };
 
-    // Mapping der Filter auf TMDb-API-Parameter
-    if (this.filterState.runtime) {
-      if (this.filterState.runtime === '<90') {
-        options['with_runtime.lte'] = 89;
-      } else if (this.filterState.runtime === '90-120') {
-        options['with_runtime.gte'] = 90;
-        options['with_runtime.lte'] = 120;
-      } else if (this.filterState.runtime === '>120') {
-        options['with_runtime.gte'] = 121;
-      }
+    // Sprache 
+    if (this.filterState.language?.length) {
+      const langs = Array.isArray(this.filterState.language) ? this.filterState.language : [this.filterState.language];
+      options['with_original_language'] = langs.join(',');
     }
 
+    // Bewertung
     if (this.filterState.rating) {
       options['vote_average.gte'] = parseFloat(this.filterState.rating);
     }
 
+    // Anzahl Bewertungen
     if (this.filterState.voteCount) {
       options['vote_count.gte'] = parseInt(this.filterState.voteCount, 10);
     }
 
-    if (this.filterState.language) {
-      options['with_original_language'] = this.filterState.language;
+    // // Mapping der Filter auf TMDb-API-Parameter
+    // if (this.filterState.runtime) {
+    //   if (this.filterState.runtime === '<90') {
+    //     options['with_runtime.lte'] = 89;
+    //   } else if (this.filterState.runtime === '90-120') {
+    //     options['with_runtime.gte'] = 90;
+    //     options['with_runtime.lte'] = 120;
+    //   } else if (this.filterState.runtime === '>120') {
+    //     options['with_runtime.gte'] = 121;
+    //   }
+    // }
+
+    // Laufzeit 
+    const runtimeFilters: any[] = [];
+    if (this.filterState.runtime?.length) {
+      const runtimes = Array.isArray(this.filterState.runtime) ? this.filterState.runtime : [this.filterState.runtime];
+      runtimes.forEach((val: string) => {
+        if (val === '<90') {
+          runtimeFilters.push({ gte: 0, lte: 89 });
+        } else if (val === '90-120') {
+          runtimeFilters.push({ gte: 90, lte: 120 });
+        } else if (val === '>120') {
+          runtimeFilters.push({ gte: 121 });
+        }
+      });
     }
 
-    if (this.filterState.decade) {
-      const year = this.filterState.decade;
-      if (year === 'older') {
-        options['primary_release_date.lte'] = '1979-12-31';
-      } else {
-        options['primary_release_date.gte'] = `${year}-01-01`;
-        options['primary_release_date.lte'] = `${parseInt(year) + 9}-12-31`;
-      }
+    // Jahrzehnte
+    const decadeFilters: any[] = [];
+    if (this.filterState.decade?.length) {
+      const decades = Array.isArray(this.filterState.decade) ? this.filterState.decade : [this.filterState.decade];
+      decades.forEach((dec: string) => {
+        if (dec === 'older') {
+          decadeFilters.push({ lte: '1979-12-31' });
+        } else {
+          const start = `${dec}-01-01`;
+          const end = `${parseInt(dec, 10) + 9}-12-31`;
+          decadeFilters.push({ gte: start, lte: end });
+        }
+      });
     }
 
     // Genre beibehalten, wenn gesetzt
     if (this.currentCategoryId) {
       switch (this.currentCategoryId) {
         case 'popular':
+          options['sort_by'] = 'popularity.desc';
+          break;
         case 'top-rated':
+          options['sort_by'] = 'vote_average.desc';
+          options['vote_count.gte'] = options['vote_count.gte'] || 200; // Mindestanzahl Stimmen
+          break;
         case 'trending':
+          options['sort_by'] = 'popularity.desc'; 
+          break;
         case 'all':
-          // Ignorieren wir – nutzen nur Filter
+          // Keine spezielle Sortierung TODO: zufällige sortierung?
           break;
         default:
           options.with_genres = parseInt(this.currentCategoryId); // fallback falls Kategorie ID = Genre ID
       }
+    }
+    // Genre-ID setzen, wenn vorhanden (hat Vorrang vor Category)
+    if (this.currentGenreId) {
+      options.with_genres = this.currentGenreId;
     }
 
     this.movieService.discoverMovies(options).subscribe((res: any) => {

@@ -17,7 +17,6 @@
 
 
 // Verena
-// Genre Auswahl optimieren
 // Bei Genres --> auch noch andere Kategorien (Best of All Time, Alle Filme,.. )
 //     --> Filtermöglichkeiten (Filmlänge, FSK, gesehen?, Streamingprovider...) die über die Kategorien hinweg eingstellt bleiben
 // does the dog die API

@@ -2,11 +2,11 @@
 
     <ion-item>
         <ion-label>Filmlänge</ion-label>
-        <ion-select [value]="filters.runtime" (ionChange)="updateFilter('runtime', $event.detail.value)">
-            <ion-select-option value="<90">
-                < 90 min</ion-select-option>
-                    <ion-select-option value="90-120">90–120 min</ion-select-option>
-                    <ion-select-option value=">120">> 120 min</ion-select-option>
+        <ion-select [value]="filters.runtime" (ionChange)="updateFilter('runtime', $event.detail.value)"
+            multiple="true">
+            <ion-select-option value="<90">&lt; 90 min</ion-select-option>
+            <ion-select-option value="90-120">90–120 min</ion-select-option>
+            <ion-select-option value=">120">&gt; 120 min</ion-select-option>
         </ion-select>
     </ion-item>
 
@@ -28,7 +28,7 @@
 
     <ion-item>
         <ion-label>Jahrzehnt</ion-label>
-        <ion-select [value]="filters.decade" (ionChange)="updateFilter('decade', $event.detail.value)">
+        <ion-select [value]="filters.decade" (ionChange)="updateFilter('decade', $event.detail.value)" multiple="true">
             <ion-select-option value="2020">2020er</ion-select-option>
             <ion-select-option value="2010">2010er</ion-select-option>
             <ion-select-option value="2000">2000er</ion-select-option>
@@ -40,7 +40,8 @@
 
     <ion-item>
         <ion-label>Sprache</ion-label>
-        <ion-select [value]="filters.language" (ionChange)="updateFilter('language', $event.detail.value)">
+        <ion-select [value]="filters.language" (ionChange)="updateFilter('language', $event.detail.value)"
+            multiple="true">
             <ion-select-option value="de">Deutsch</ion-select-option>
             <ion-select-option value="en">Englisch</ion-select-option>
         </ion-select>
