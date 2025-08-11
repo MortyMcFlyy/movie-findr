@@ -133,31 +133,32 @@ ion-card img {
 /* Add styles for the favorite stamp */
 .favorite-stamp {
   position: absolute;
-  top: 10px;
+  top: -200%;
   left: 10px;
-  background-color: rgba(255, 215, 0, 0.85);
-  color: #8b0000;
+  background-color: rgba(255, 0, 0, 0.85); /* Kräftiges Rot mit leichter Transparenz */
+  color: #ffffff; /* Weißer Text */
   padding: 5px 10px;
-  border-radius: 5px;
-  transform: rotate(-15deg);
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  transform: rotate(-5deg);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
   font-weight: bold;
-  font-size: 0.8rem;
   display: flex;
   align-items: center;
   gap: 5px;
   z-index: 10;
-  max-width: 150px;
-  border: 2px solid #8b0000;
+  border: 2px solid #ffffff; /* Weißer Rand */
+  border-radius: 4px; /* Leicht abgerundete Ecken */
+  max-width: 120px;
 }
 
 .favorite-stamp ion-icon {
   font-size: 1.2rem;
-  color: #8b0000;
+  color: #ffffff;
 }
 
 .favorite-stamp span {
-  font-family: "Comic Sans MS", cursive, sans-serif;
   text-transform: uppercase;
+  font-size: 0.9rem;
+  font-weight: 800;
   line-height: 1;
+  letter-spacing: 0.5px;
 }
