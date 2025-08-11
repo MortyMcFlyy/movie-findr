@@ -6,6 +6,7 @@
 // History page
 // Favoriten page
 // Favoriten und History in der DB speichern
+//Scrolling lädt nicht neu sondern springt wieder nach oben?
 
 
 
