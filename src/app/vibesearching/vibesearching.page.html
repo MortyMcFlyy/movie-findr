@@ -15,60 +15,60 @@
       
       <div class="button-container">
         <!-- Bestehende Buttons bleiben unverändert -->
-        <ion-button expand="block" color="success" (click)="selectMood('happy')" class="vibe-button">
+        <ion-button expand="block" (click)="selectMood('happy')" class="vibe-button">
           <div class="button-content">
-            <ion-icon name="happy-outline" size="large"></ion-icon>
-            <div>Fröhlich</div>
+            <ion-icon name="happy-outline"></ion-icon>
+            <span>Fröhlich</span>
           </div>
         </ion-button>
         
-        <ion-button expand="block" color="tertiary" (click)="selectMood('relaxed')" class="vibe-button">
+        <ion-button expand="block" (click)="selectMood('relaxed')" class="vibe-button">
           <div class="button-content">
             <ion-icon name="leaf-outline" size="large"></ion-icon>
-            <div>Entspannt</div>
+            <span>Entspannt</span>
           </div>
         </ion-button>
         
-        <ion-button expand="block" color="danger" (click)="selectMood('thrilling')" class="vibe-button">
+        <ion-button expand="block" (click)="selectMood('thrilling')" class="vibe-button">
           <div class="button-content">
             <ion-icon name="flash-outline" size="large"></ion-icon>
-            <div>Spannend</div>
+            <span>Spannend</span>
           </div>
         </ion-button>
 
-        <ion-button expand="block" color="dark" (click)="selectMood('horror')" class="vibe-button">
+        <ion-button expand="block" (click)="selectMood('horror')" class="vibe-button">
           <div class="button-content">
             <ion-icon name="skull-outline" size="large"></ion-icon>
-            <div>Horror</div>
+            <span>Horror</span>
           </div>
         </ion-button>
         
         <!-- Neue Buttons für die fehlenden Stimmungen -->
-        <ion-button expand="block" color="danger" (click)="selectMood('action')" class="vibe-button">
+        <ion-button expand="block" (click)="selectMood('action')" class="vibe-button">
           <div class="button-content">
             <ion-icon name="flame-outline" size="large"></ion-icon>
-            <div>Action</div>
+            <span>Action</span>
           </div>
         </ion-button>
         
-        <ion-button expand="block" color="secondary" (click)="selectMood('love')" class="vibe-button">
+        <ion-button expand="block" (click)="selectMood('love')" class="vibe-button">
           <div class="button-content">
             <ion-icon name="heart-outline" size="large"></ion-icon>
-            <div>Romantik</div>
+            <span>Romantik</span>
           </div>
         </ion-button>
         
-        <ion-button expand="block" color="primary" (click)="selectMood('music')" class="vibe-button">
+        <ion-button expand="block" (click)="selectMood('music')" class="vibe-button">
           <div class="button-content">
             <ion-icon name="musical-notes-outline" size="large"></ion-icon>
-            <div>Musik</div>
+            <span>Musik</span>
           </div>
         </ion-button>
 
-        <ion-button expand="block" color="medium" (click)="selectMood('documentary')" class="vibe-button">
+        <ion-button expand="block" (click)="selectMood('documentary')" class="vibe-button">
           <div class="button-content">
             <ion-icon name="school-outline" size="large"></ion-icon>
-            <div>Dokumentation</div>
+            <span>Dokumentation</span>
           </div>
         </ion-button>
       </div>
@@ -79,35 +79,35 @@
       <h2>Wie lang darf der Film sein?</h2>
       
       <div class="button-container">
-        <ion-button expand="block" color="tertiary" (click)="selectDuration('shortfilm')" class="vibe-button">
+        <ion-button expand="block"  (click)="selectDuration('shortfilm')" class="vibe-button">
           <div class="button-content">
             <ion-icon name="stopwatch-outline" size="large"></ion-icon>
             <div>Kurzfilm (<40 Min)</div>
           </div>
         </ion-button>
         
-        <ion-button expand="block" color="medium" (click)="selectDuration('short')" class="vibe-button">
+        <ion-button expand="block"  (click)="selectDuration('short')" class="vibe-button">
           <div class="button-content">
             <ion-icon name="hourglass-outline" size="large"></ion-icon>
             <div>Kurz (40-90 Min)</div>
           </div>
         </ion-button>
         
-        <ion-button expand="block" color="primary" (click)="selectDuration('normal')" class="vibe-button">
+        <ion-button expand="block"  (click)="selectDuration('normal')" class="vibe-button">
           <div class="button-content">
             <ion-icon name="time-outline" size="large"></ion-icon>
             <div>Normal (90-120 Min)</div>
           </div>
         </ion-button>
         
-        <ion-button expand="block" color="secondary" (click)="selectDuration('extended')" class="vibe-button">
+        <ion-button expand="block"  (click)="selectDuration('extended')" class="vibe-button">
           <div class="button-content">
             <ion-icon name="calendar-outline" size="large"></ion-icon>
             <div>Überlänge (>120 Min)</div>
           </div>
         </ion-button>
         
-        <ion-button expand="block" color="light" (click)="selectDuration('any')" class="vibe-button">
+        <ion-button expand="block"  (click)="selectDuration('any')" class="vibe-button">
           <div class="button-content">
             <ion-icon name="infinite-outline" size="large"></ion-icon>
             <div>Egal</div>
@@ -121,21 +121,21 @@
       <h2>Wie alt darf der Film sein?</h2>
       
       <div class="button-container">
-        <ion-button expand="block" color="primary" (click)="selectTimeframe('new')" class="vibe-button">
+        <ion-button expand="block"  (click)="selectTimeframe('new')" class="vibe-button">
           <div class="button-content">
             <ion-icon name="calendar-outline" size="large"></ion-icon>
             <div>Neu</div>
           </div>
         </ion-button>
         
-        <ion-button expand="block" color="secondary" (click)="selectTimeframe('classic')" class="vibe-button">
+        <ion-button expand="block"  (click)="selectTimeframe('classic')" class="vibe-button">
           <div class="button-content">
             <ion-icon name="time-outline" size="large"></ion-icon>
             <div>Klassiker</div>
           </div>
         </ion-button>
         
-        <ion-button expand="block" color="medium" (click)="selectTimeframe('any')" class="vibe-button">
+        <ion-button expand="block"  (click)="selectTimeframe('any')" class="vibe-button">
           <div class="button-content">
             <ion-icon name="infinite-outline" size="large"></ion-icon>
             <div>Egal</div>
@@ -153,14 +153,14 @@
           <ion-col size="12" size-md="6" size-lg="4" *ngFor="let movie of results">
             <ion-card class="movie-card">
               <img [src]="movie.poster_path ? 'https://image.tmdb.org/t/p/w300' + movie.poster_path : 'assets/images/movie-placeholder.jpg'" 
-                  alt="{{movie.title}}"/>
+                   alt="{{movie.title}}"/>
               <ion-card-header>
                 <ion-card-title>{{movie.title}}</ion-card-title>
                 <ion-card-subtitle *ngIf="movie.release_date">{{movie.release_date | date:'yyyy'}}</ion-card-subtitle>
               </ion-card-header>
               <ion-card-content>
                 <div class="rating" *ngIf="movie.vote_average">
-                  <ion-badge color="primary">{{movie.vote_average | number:'1.1-1'}}</ion-badge>
+                  <ion-badge>{{movie.vote_average | number:'1.1-1'}}</ion-badge>
                 </div>
               </ion-card-content>
             </ion-card>
@@ -168,10 +168,52 @@
         </ion-row>
       </ion-grid>
       
-      <ion-button expand="block" (click)="restart()" class="restart-button">
+      <!-- Abstand für die sticky Buttons unten -->
+      <div class="sticky-button-spacer"></div>
+    </div>
+
+    <!-- Sticky Button Container - außerhalb des results-container -->
+    <div class="sticky-button-container" *ngIf="currentStep === 4">
+      <ion-button expand="block" (click)="restart()" class="sticky-button">
         <ion-icon name="refresh-outline" slot="start"></ion-icon>
         Neue Suche starten
+      </ion-button>
+      <ion-button expand="block" (click)="reshuffleMovies()" class="sticky-button">
+        <ion-icon name="dice" slot="start"></ion-icon>
+        Neue Filme shuffeln
       </ion-button>
     </div>
   </div>
 </ion-content>
+
+<style>
+/* Sticky Button Container */
+.sticky-button-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, var(--ion-background-color) 80%, transparent);
+  padding: 16px;
+  padding-top: 30px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Styling für die sticky Buttons */
+.sticky-button {
+  margin: 0;
+}
+
+/* Spacer am Ende der Ergebnisse, damit nichts vom sticky footer verdeckt wird */
+.sticky-button-spacer {
+  height: 120px; /* Höhe des sticky Bereichs plus etwas Abstand */
+}
+
+/* Anpassung der results-container */
+.results-container {
+  padding-bottom: 20px;
+}
+</style>

@@ -183,4 +183,61 @@ export class VibesearchingPage implements OnInit {
     this.selectedTimeframe = null;
     this.results = [];
   }
+
+  reshuffleMovies() {
+    // Zeige einen Ladeindikator an
+    this.results = [];
+    
+    // API-Parameter aus der vorherigen Suche wiederverwenden
+    const discoverParams: any = {
+      page: Math.floor(Math.random() * 10) + 1  // Andere Seite für neue Ergebnisse
+    };
+
+    // Vorherige Parameter wiederherstellen
+    if (this.selectedMood && this.moodToGenreMap[this.selectedMood]) {
+      discoverParams.with_genres = this.moodToGenreMap[this.selectedMood].join('|');
+    }
+
+    // Filmdauerparameter wiederherstellen
+    if (this.selectedDuration === 'shortfilm') {
+      discoverParams.with_runtime_lte = 40;
+    } else if (this.selectedDuration === 'short') {
+      discoverParams.with_runtime_gte = 40;
+      discoverParams.with_runtime_lte = 90;
+    } else if (this.selectedDuration === 'normal') {
+      discoverParams.with_runtime_gte = 90;
+      discoverParams.with_runtime_lte = 120;
+    } else if (this.selectedDuration === 'extended') {
+      discoverParams.with_runtime_gte = 120;
+    }
+
+    // Qualitätsfilter wiederherstellen
+    discoverParams.vote_average_gte = 7.0;
+    discoverParams.vote_count_gte = 200;
+    
+    // Zeitrahmenparameter wiederherstellen
+    const currentYear = new Date().getFullYear();
+    if (this.selectedTimeframe === 'new') {
+      const twoYearsAgo = currentYear - 2;
+      discoverParams.primary_release_date_gte = `${twoYearsAgo}-01-01`;
+    } else if (this.selectedTimeframe === 'classic') {
+      const classicYear = currentYear - 15;
+      discoverParams.primary_release_date_lte = `${classicYear}-12-31`;
+    }
+    
+    // API erneut aufrufen
+    this.movieService.discoverVibesearchMovies(discoverParams).subscribe(
+      (res) => {
+        if (res.results && res.results.length > 0) {
+          this.results = this.getRandomSubset(res.results, 6);
+        } else {
+          this.loadFallbackResults();
+        }
+      },
+      (error) => {
+        console.error('Fehler beim Neuladen der Filme:', error);
+        this.loadFallbackResults();
+      }
+    );
+  }
 }
