@@ -6,6 +6,7 @@
 // History page
 // Favoriten page
 // Favoriten und History in der DB speichern
+//reshuffle der Cards on vibesearching
 
 
 
