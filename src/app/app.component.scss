@@ -123,3 +123,25 @@ ion-item-divider {
   min-height: 1px;
   margin: 10px 0;
 }
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  .movie-logo {
+    font-size: 24px;
+    margin-right: 8px;
+    color: var(--ion-color-primary);
+  }
+
+  span {
+    font-size: 20px;
+    font-weight: bold;
+  }
+}

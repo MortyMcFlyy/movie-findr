@@ -53,6 +53,12 @@ export class FolderPage implements OnInit {
           this.searchByCategory(this.currentCategoryId);
         }
       }
+
+      // Set searchTerm if exists
+      if (params['q']) {
+        this.searchTerm = params['q'];
+        this.search(); // Optional: direkt suchen
+      }
     });
 
     // Load both statuses after movies are loaded

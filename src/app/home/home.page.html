@@ -1,0 +1,48 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      <div class="logo-container" routerLink="/home">
+      
+        <span>MovieFindr</span>
+      </div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="hero-slider">
+    <div
+      class="slide-container"
+      *ngIf="trendingMovies && trendingMovies.length"
+      [style.backgroundImage]="'url(https://image.tmdb.org/t/p/w1280' + trendingMovies[0].backdrop_path + ')'"
+    >
+      <div class="slide-content">
+        <h1>{{ trendingMovies[0].title }}</h1>
+        <p>{{ trendingMovies[0].overview | slice:0:120 }}...</p>
+        <ion-button color="light" (click)="navigateToMovieTitle(trendingMovies[0].title)">
+          Mehr Infos
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Access Cards -->
+  <div class="section-title">
+    <h2>Filme entdecken</h2>
+  </div>
+  <div class="quick-access">
+    <div class="quick-card" routerLink="/vibesearching">
+      <ion-icon name="happy-outline"></ion-icon>
+      <h3>Vibe-Suche</h3>
+      <p>Filme nach Stimmung finden</p>
+    </div>
+    <div class="quick-card" routerLink="/folder/Inbox">
+      <ion-icon name="search-outline"></ion-icon>
+      <h3>Film-Suche</h3>
+      <p>Nach Titel oder Stichwort</p>
+    </div>
+  </div>
+</ion-content>

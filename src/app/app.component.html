@@ -3,7 +3,13 @@
     <ion-menu contentId="main-content" type="overlay">
       <ion-content>
         <ion-list id="inbox-list">
-          <ion-list-header>Movie Findr</ion-list-header>
+          <!-- Logo und Titel als Header -->
+          <ion-list-header>
+            <div class="logo-container" routerLink="/home">
+              <ion-icon name="film-outline" class="movie-logo"></ion-icon>
+              <span>MovieFindr</span>
+            </div>
+          </ion-list-header>
           <ion-note>Finde deinen nächsten Film!</ion-note>
 
           @for (p of appPages; track p; let i = $index) {

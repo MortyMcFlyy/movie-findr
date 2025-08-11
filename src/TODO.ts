@@ -6,7 +6,7 @@
 // History page
 // Favoriten page
 // Favoriten und History in der DB speichern
-//reshuffle der Cards on vibesearching
+
 
 
 
@@ -27,4 +27,5 @@
 
 // Cards um favorisieren-Button ergänzen ->persistieren in der DB
 // Cards um gesehen-Button ergänzen -> persistieren in der DB
+//reshuffle der Cards on vibesearching
 
