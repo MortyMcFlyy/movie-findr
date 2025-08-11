@@ -133,9 +133,9 @@ ion-card img {
 /* Add styles for the favorite stamp */
 .favorite-stamp {
   position: absolute;
-  top: -200%;
-  left: 10px;
-  background-color: rgba(255, 0, 0, 0.85); /* Kräftiges Rot mit leichter Transparenz */
+  top: -100%;
+  left: 5%;
+  background-color: rgba(255, 0, 0, 0.712); /* Kräftiges Rot mit leichter Transparenz */
   color: #ffffff; /* Weißer Text */
   padding: 5px 10px;
   transform: rotate(-5deg);
