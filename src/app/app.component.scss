@@ -117,3 +117,9 @@ ion-note {
 ion-item.selected {
   --color: var(--ion-color-primary);
 }
+
+ion-item-divider {
+  --background: var(--ion-color-light);
+  min-height: 1px;
+  margin: 10px 0;
+}
