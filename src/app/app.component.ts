@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 export class AppComponent {
   public appPages = [
     { title: 'Filme suchen', url: '/search', icon: 'search' },
-    { title: 'Favoriten', url: '/favorites', icon: 'heart' },
+    { title: 'Favoriten', url: '/favorites', icon: 'star' },
     { title: 'VibeSearching', url: '/vibesearching', icon: 'film' },
     { title: 'Verlauf', url: '/history', icon: 'time' }
   ];
