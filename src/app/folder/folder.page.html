@@ -83,14 +83,26 @@
             <ion-card-subtitle *ngIf="movie.release_date">{{movie.release_date | date:'yyyy'}}</ion-card-subtitle>
           </ion-card-header>
           <ion-card-content>
+            <!-- Favorit-Stempel -->
+            <div class="favorite-stamp" *ngIf="movie.favorite">
+              <ion-icon name="star"></ion-icon>
+              <span>I LIKE THIS ONE</span>
+            </div>
+
             <p class="movie-overview">{{movie.overview}}</p>
             <div class="action-row">
               <div class="rating" *ngIf="movie.vote_average">
                 <ion-badge color="primary">{{movie.vote_average | number:'1.1-1'}}</ion-badge>
               </div>
-              <ion-button fill="clear" size="small" (click)="toggleWatched(movie, $event)">
-                <ion-icon [name]="movie.watched ? 'eye' : 'eye-outline'" slot="icon-only"></ion-icon>
-              </ion-button>
+              <div class="action-buttons">
+                <ion-button fill="clear" size="small" (click)="toggleWatched(movie, $event)">
+                  <ion-icon [name]="movie.watched ? 'eye' : 'eye-outline'" slot="icon-only"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" size="small" (click)="toggleFavorite(movie, $event)">
+                  <ion-icon [name]="movie.favorite ? 'star' : 'star-outline'" slot="icon-only" 
+                            [color]="movie.favorite ? 'warning' : ''"></ion-icon>
+                </ion-button>
+              </div>
             </div>
 
             <div class="provider-section" *ngIf="movie.id">

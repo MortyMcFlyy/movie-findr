@@ -54,6 +54,10 @@ export class FolderPage implements OnInit {
         }
       }
     });
+
+    // Load both statuses after movies are loaded
+    this.loadWatchedMovies();
+    this.loadFavoriteMovies();
   }
 
   search() {
@@ -70,6 +74,7 @@ export class FolderPage implements OnInit {
       this.movies = res.results;
       this.loadProvidersForMovies();
       this.loadWatchedMovies();
+      this.loadFavoriteMovies();
     });
   }
 
@@ -200,6 +205,7 @@ export class FolderPage implements OnInit {
 
     this.loadProvidersForMovies();
     this.loadWatchedMovies();
+    this.loadFavoriteMovies();
   }
 
   async openFilterPopover(ev: Event) {
@@ -440,6 +446,38 @@ export class FolderPage implements OnInit {
     // Mark movies as watched if their ID is in the saved list
     this.movies.forEach(movie => {
       movie.watched = watchedIds.includes(movie.id);
+    });
+  }
+
+  toggleFavorite(movie: any, event: Event) {
+    // Prevent event from propagating to card click handler
+    event.stopPropagation();
+    
+    // Toggle favorite status
+    movie.favorite = !movie.favorite;
+    
+    // Save to local storage
+    this.saveFavoriteMovies();
+  }
+
+  // Add method to save favorite movies
+  saveFavoriteMovies() {
+    // Get current list of favorite movie IDs
+    const favoriteMovies = this.movies
+      .filter(movie => movie.favorite)
+      .map(movie => movie.id);
+      
+    // Save to localStorage
+    localStorage.setItem('favoriteMovies', JSON.stringify(favoriteMovies));
+  }
+
+  // Add method to load favorite status
+  loadFavoriteMovies() {
+    const favoriteIds = JSON.parse(localStorage.getItem('favoriteMovies') || '[]');
+    
+    // Mark movies as favorite if their ID is in the saved list
+    this.movies.forEach(movie => {
+      movie.favorite = favoriteIds.includes(movie.id);
     });
   }
 }

@@ -81,6 +81,11 @@ ion-card img {
   margin-bottom: 10px;
 }
 
+.action-buttons {
+  display: flex;
+  gap: 5px;
+}
+
 .watched-banner {
   position: absolute;
   top: 50%;
@@ -123,4 +128,36 @@ ion-card img {
 
 .movie-card.watched-movie img {
   opacity: 0.7;
+}
+
+/* Add styles for the favorite stamp */
+.favorite-stamp {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(255, 215, 0, 0.85);
+  color: #8b0000;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transform: rotate(-15deg);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  font-weight: bold;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 10;
+  max-width: 150px;
+  border: 2px solid #8b0000;
+}
+
+.favorite-stamp ion-icon {
+  font-size: 1.2rem;
+  color: #8b0000;
+}
+
+.favorite-stamp span {
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  text-transform: uppercase;
+  line-height: 1;
 }
