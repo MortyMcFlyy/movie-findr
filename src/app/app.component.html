@@ -28,6 +28,21 @@
             </ion-menu-toggle>
           }
         </ion-list>
+
+        <ion-list id="settings-list">
+        <ion-label>_________________________________________</ion-label>
+
+       
+   
+          
+          <!-- Neuer Eintrag für Einstellungen -->
+          <ion-menu-toggle auto-hide="false">
+            <ion-item routerDirection="root" routerLink="/settings" lines="none" detail="false" routerLinkActive="selected">
+              <ion-icon slot="start" name="settings-outline"></ion-icon>
+              <ion-label>Einstellungen</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+        </ion-list>
       </ion-content>
     </ion-menu>
     <ion-router-outlet id="main-content"></ion-router-outlet>

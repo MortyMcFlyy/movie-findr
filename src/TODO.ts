@@ -12,7 +12,7 @@
 
 // Felix
 // Vibe searching algorithmus anpassen + Streamingprovider + Geolocation neu anfragen?
-// Letterbox API 
+// Letterbox API ->ist angemailt
 
 
 // Verena
