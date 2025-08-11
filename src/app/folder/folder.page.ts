@@ -69,6 +69,7 @@ export class FolderPage implements OnInit {
     this.movieService.searchMovies(this.searchTerm).subscribe((res: any) => {
       this.movies = res.results;
       this.loadProvidersForMovies();
+      this.loadWatchedMovies();
     });
   }
 
@@ -198,6 +199,7 @@ export class FolderPage implements OnInit {
     }
 
     this.loadProvidersForMovies();
+    this.loadWatchedMovies();
   }
 
   async openFilterPopover(ev: Event) {
@@ -409,4 +411,35 @@ export class FolderPage implements OnInit {
     });
   }
 
+  toggleWatched(movie: any, event: Event) {
+    // Prevent event from propagating to card click handler if you have one
+    event.stopPropagation();
+    
+    // Toggle watched status
+    movie.watched = !movie.watched;
+    
+    // Save to local storage
+    this.saveWatchedMovies();
+  }
+
+  // Add method to save watched movies
+  saveWatchedMovies() {
+    // Get current list of watched movie IDs
+    const watchedMovies = this.movies
+      .filter(movie => movie.watched)
+      .map(movie => movie.id);
+      
+    // Save to localStorage
+    localStorage.setItem('watchedMovies', JSON.stringify(watchedMovies));
+  }
+
+  // Add method to load watched status
+  loadWatchedMovies() {
+    const watchedIds = JSON.parse(localStorage.getItem('watchedMovies') || '[]');
+    
+    // Mark movies as watched if their ID is in the saved list
+    this.movies.forEach(movie => {
+      movie.watched = watchedIds.includes(movie.id);
+    });
+  }
 }

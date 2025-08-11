@@ -73,3 +73,54 @@ ion-card img {
   border-radius: 4px;
   object-fit: contain;
 }
+
+.action-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.watched-banner {
+  position: absolute;
+  top: 50%;
+  left: -5%;
+  right: -5%; /* Erweitert über die Kartenränder hinaus */
+  text-align: center;
+  transform: translateY(-50%) rotate(-10deg);
+  z-index: 10;
+  pointer-events: none;
+  overflow: hidden;
+  width: 110%; /* Sicherstellen, dass es breit genug ist */
+}
+
+.watched-banner span {
+  background-color: rgba(255, 255, 0, 0.8);
+  color: black;
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 5px 0; /* Vertikaler Abstand, horizontal kein Padding */
+  display: block; /* Block statt inline-block für volle Breite */
+  text-transform: uppercase;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
+  letter-spacing: 1px;
+  white-space: nowrap; /* Verhindert Umbrüche */
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.2),
+    rgba(0, 0, 0, 0.2) 10px,
+    rgba(0, 0, 0, 0) 10px,
+    rgba(0, 0, 0, 0) 20px
+  ); /* Optionales Muster */
+}
+
+.movie-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.movie-card.watched-movie img {
+  opacity: 0.7;
+}

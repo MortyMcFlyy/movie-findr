@@ -84,8 +84,13 @@
           </ion-card-header>
           <ion-card-content>
             <p class="movie-overview">{{movie.overview}}</p>
-            <div class="rating" *ngIf="movie.vote_average">
-              <ion-badge color="primary">{{movie.vote_average | number:'1.1-1'}}</ion-badge>
+            <div class="action-row">
+              <div class="rating" *ngIf="movie.vote_average">
+                <ion-badge color="primary">{{movie.vote_average | number:'1.1-1'}}</ion-badge>
+              </div>
+              <ion-button fill="clear" size="small" (click)="toggleWatched(movie, $event)">
+                <ion-icon [name]="movie.watched ? 'eye' : 'eye-outline'" slot="icon-only"></ion-icon>
+              </ion-button>
             </div>
 
             <div class="provider-section" *ngIf="movie.id">
@@ -103,6 +108,10 @@
               <small *ngIf="movie.providers?.length === 0 && !movie.providersLoading">
                 No streaming options found
               </small>
+            </div>
+            
+            <div class="watched-banner" *ngIf="movie.watched">
+              <span>ALREADY WATCHED &nbsp;&nbsp; ALREADY WATCHED &nbsp;&nbsp; ALREADY WATCHED</span>
             </div>
           </ion-card-content>
         </ion-card>

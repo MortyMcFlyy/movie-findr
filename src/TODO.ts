@@ -15,7 +15,6 @@
 // Letterbox API 
 // Cards um favorisieren-Button ergänzen 
 // Cards um gesehen-Button ergänzen 
-// Availability auf Cards ergänzen
 
 // Verena
 // Bei Genres --> auch noch andere Kategorien (Best of All Time, Alle Filme,.. )
@@ -23,5 +22,6 @@
 // does the dog die API
 // fuzzy search
 
-
+//DONE:
+//Availability auf Cards ergänzen
 
