@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { AlertController } from '@ionic/angular';
+import { PreferencesService, Settings } from '../services/preferences.service';
 
 @Component({
   selector: 'app-settings',
@@ -8,60 +9,57 @@ import { AlertController } from '@ionic/angular';
   standalone: false,
 })
 export class SettingsPage implements OnInit {
-  darkMode = false;
-  fskLevel = '0';
+  private prefs = inject(PreferencesService);
 
-  constructor(private alertController: AlertController) {}
+  settings: Settings = { darkMode: false, fskLevel: '0' };
 
-  ngOnInit() {
-    // Load saved settings
-    this.loadSettings();
+  constructor(private alertController: AlertController) { }
+
+  async ngOnInit() {
+    this.settings = await this.prefs.getSettings();
+    this.applyDarkMode(this.settings.darkMode);
   }
 
-  loadSettings() {
-    // Load dark mode setting
-    const savedDarkMode = localStorage.getItem('darkMode');
-    this.darkMode = savedDarkMode === 'true';
-    
-    // Apply dark mode if needed
-    document.body.classList.toggle('dark', this.darkMode);
-    
-    // Load FSK setting
-    const savedFsk = localStorage.getItem('fskLevel');
-    if (savedFsk) {
-      this.fskLevel = savedFsk;
-    }
+  async onToggleDarkMode(enabled: boolean) {
+    this.settings.darkMode = enabled;
+    this.applyDarkMode(enabled);
+    await this.prefs.patchSettings({ darkMode: enabled });
   }
 
-  toggleDarkMode() {
-    // Toggle dark mode class on body
-    document.body.classList.toggle('dark', this.darkMode);
-    
-    // Save preference
-    localStorage.setItem('darkMode', this.darkMode.toString());
+  async onChangeFsk(level: string) {
+    this.settings.fskLevel = level;
+    await this.prefs.patchSettings({ fskLevel: level });
+  }
+
+  private applyDarkMode(enabled: boolean) {
+    document.body.classList.toggle('dark', enabled);
   }
 
   async clearData() {
     const alert = await this.alertController.create({
       header: 'Daten löschen',
-      message: 'Möchtest du wirklich alle gespeicherten Daten (Favoriten, History, Einstellungen) zurücksetzen?',
+      message: 'Möchtest du wirklich alle gespeicherten Daten (Favoriten, Verlauf, Einstellungen) zurücksetzen?',
       buttons: [
-        {
-          text: 'Abbrechen',
-          role: 'cancel'
-        }, {
-          text: 'Löschen',
-          handler: () => {
-            // Clear all app data
-            localStorage.clear();
-            this.loadSettings(); // Reset UI to defaults
-          }
-        }
-      ]
+        { text: 'Abbrechen', role: 'cancel' },
+        { text: 'Löschen', role: 'confirm' },
+      ],
     });
-
     await alert.present();
+    const { role } = await alert.onDidDismiss();
+    if (role === 'confirm') {
+      await this.prefs.clearAll();
+      this.settings = await this.prefs.getSettings();  // Defaults
+      this.applyDarkMode(this.settings.darkMode); // Reset dark mode
+      const done = await this.alertController.create({
+        header: 'Zurückgesetzt',
+        message: 'Alles wurde gelöscht.',
+        buttons: ['OK'],
+      });
+      await done.present();
+    }
   }
+
+
 
   async openAbout() {
     const alert = await this.alertController.create({

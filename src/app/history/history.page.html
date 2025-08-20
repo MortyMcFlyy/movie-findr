@@ -1,13 +1,36 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>History</ion-title>
+    <ion-title>Verlauf</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="onClearHistory()">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">History</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <!-- Kein Arrow im Template: Event an Methode delegieren -->
+  <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- korrekter Property-Name -->
+  <ion-list *ngIf="historyMovies.length; else empty">
+    <ion-item *ngFor="let movie of historyMovies">
+      <ion-thumbnail slot="start">
+        <img [src]="'https://image.tmdb.org/t/p/w185' + movie.poster_path" [alt]="movie.title || ''" />
+      </ion-thumbnail>
+      <ion-label>
+        <h2>{{ movie.title }}</h2>
+        <p>Rating: {{ movie.vote_average || '—' }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ng-template #empty>
+    <ion-text color="medium">
+      <p class="ion-padding">Noch kein Verlauf.</p>
+    </ion-text>
+  </ng-template>
 </ion-content>

@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { PreferencesService } from './services/preferences.service';
 
 @Component({
   selector: 'app-root',
@@ -7,7 +8,9 @@ import { Router } from '@angular/router';
   styleUrls: ['app.component.scss'],
   standalone: false,
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+  private prefs = inject(PreferencesService);
+
   public appPages = [
     { title: 'Filme suchen', url: '/search', icon: 'search' },
     { title: 'Favoriten', url: '/favorites', icon: 'star' },
@@ -34,6 +37,12 @@ export class AppComponent {
 
 
   constructor(private router: Router) { }
+
+  async ngOnInit() {
+    // Einstellungen lesen & darkmode setzen
+    const s = await this.prefs.getSettings();
+    document.body.classList.toggle('dark', s.darkMode);
+  }
 
   // Navigation based on category type
   searchByCategory(category: any) {

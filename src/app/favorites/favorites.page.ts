@@ -1,4 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { PreferencesService } from '../services/preferences.service';
+import { MovieService } from '../services/movie.service';
+import { firstValueFrom, forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
+
+type MovieCard = { id: number; title?: string; poster_path?: string; vote_average?: number };
+
 
 @Component({
   selector: 'app-favorites',
@@ -7,10 +15,71 @@ import { Component, OnInit } from '@angular/core';
   standalone: false,
 })
 export class FavoritesPage implements OnInit {
+  private preferences = inject(PreferencesService);
+  private movieService = inject(MovieService);
 
-  constructor() { }
+  favoriteIds: number[] = [];
+  favoriteMovies: MovieCard[] = [];
+  loading = false;
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.loadFavorites();
+  }
+
+  async ionViewWillEnter() {
+    // Beim Zurückkehren aktualisieren, falls sich Favoriten geändert haben
+    await this.loadFavorites();
+  }
+
+  async loadFavorites() {
+    this.loading = true;
+    this.favoriteIds = await this.preferences.getFavorites();
+
+    // Details in Batches laden
+    const batchSize = 20;
+    const idChunks: number[][] = [];
+    for (let i = 0; i < this.favoriteIds.length; i += batchSize) {
+      idChunks.push(this.favoriteIds.slice(i, i + batchSize));
+    }
+
+    const movies: MovieCard[] = [];
+    for (const chunk of idChunks) {
+      const requests$ = forkJoin(
+        chunk.map(id =>
+          this.movieService.getMovieDetails(id).pipe(catchError(() => of(null)))
+        )
+      );
+      const results = await firstValueFrom(requests$);
+      if (Array.isArray(results)) {
+        for (const movie of results) {
+          if (movie) {
+            movies.push({
+              id: movie.id,
+              title: movie.title ?? movie.name,
+              poster_path: movie.poster_path,
+              vote_average: movie.vote_average,
+            });
+          }
+        }
+      }
+    }
+
+    this.favoriteMovies = movies;
+    this.loading = false;
+  }
+
+  async onToggleFavorite(id: number) {
+    await this.preferences.toggleFavorite(id);
+    await this.loadFavorites(); // Liste aktualisieren
+  }
+  
+  async onRefresh(event: CustomEvent) {
+    try {
+      await this.loadFavorites();
+    } finally {
+      (event.target as HTMLIonRefresherElement).complete();
+    }
   }
 
 }
+
