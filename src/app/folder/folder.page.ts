@@ -121,18 +121,29 @@ export class FolderPage implements OnInit {
         this.movieService.getPopularMovies(this.currentPage).subscribe((res: any) => {
           this.movies = [...this.movies, ...res.results];
           this.totalPages = res.total_pages;
+          this.loadProvidersForMovies();
+          this.loadWatchedMovies();
+          this.loadFavoriteMovies();
         });
         break;
+
       case 'top-rated':
         this.movieService.getTopRatedMovies(this.currentPage).subscribe((res: any) => {
           this.movies = [...this.movies, ...res.results];
           this.totalPages = res.total_pages;
+          this.loadProvidersForMovies();
+          this.loadWatchedMovies();
+          this.loadFavoriteMovies();
         });
         break;
+
       case 'trending':
         this.movieService.getTrendingMovies('week', this.currentPage).subscribe((res: any) => {
           this.movies = [...this.movies, ...res.results];
           this.totalPages = res.total_pages;
+          this.loadProvidersForMovies();
+          this.loadWatchedMovies();
+          this.loadFavoriteMovies();
         });
         break;
       case 'all':
@@ -339,6 +350,9 @@ export class FolderPage implements OnInit {
     this.movieService.discoverMovies(options).subscribe((res: any) => {
       this.movies = res.results;
       this.totalPages = res.total_pages;
+      this.loadProvidersForMovies();
+      this.loadWatchedMovies();
+      this.loadFavoriteMovies();
     });
   }
 
@@ -352,6 +366,9 @@ export class FolderPage implements OnInit {
       }).subscribe((res: any) => {
         this.movies = [...this.movies, ...res.results];
         this.totalPages = res.total_pages;
+        this.loadProvidersForMovies();
+        this.loadWatchedMovies();
+        this.loadFavoriteMovies();
       });
     }
   }
@@ -432,28 +449,6 @@ export class FolderPage implements OnInit {
     });
   }
 
-  /*toggleWatched(movie: any, event: Event) {
-    // Prevent event from propagating to card click handler if you have one
-    event.stopPropagation();
-
-    // Toggle watched status
-    movie.watched = !movie.watched;
-
-    // Save to local storage
-    this.saveWatchedMovies();
-  }
-
-  // Add method to save watched movies
-  saveWatchedMovies() {
-    // Get current list of watched movie IDs
-    const watchedMovies = this.movies
-      .filter(movie => movie.watched)
-      .map(movie => movie.id);
-
-    // Save to localStorage
-    localStorage.setItem('watchedMovies', JSON.stringify(watchedMovies));
-  }*/
-
   // method to load watched status
   async loadWatchedMovies() {
     const historyIds = await this.prefs.getHistory();
@@ -464,29 +459,6 @@ export class FolderPage implements OnInit {
       movie.watched = this.watchedIdSet.has(movie.id);
     });
   }
-  /*
-    toggleFavorite(movie: any, event: Event) {
-      // Prevent event from propagating to card click handler
-      event.stopPropagation();
-  
-      // Toggle favorite status
-      movie.favorite = !movie.favorite;
-  
-      // Save to local storage
-      this.saveFavoriteMovies();
-    }
-  
-    // Add method to save favorite movies
-    saveFavoriteMovies() {
-      // Get current list of favorite movie IDs
-      const favoriteMovies = this.movies
-        .filter(movie => movie.favorite)
-        .map(movie => movie.id);
-  
-      // Save to localStorage
-      localStorage.setItem('favoriteMovies', JSON.stringify(favoriteMovies));
-    }
-  */
   // method to load favorite status
   async loadFavoriteMovies() {
     this.favoriteIds = await this.prefs.getFavorites();
@@ -514,7 +486,6 @@ export class FolderPage implements OnInit {
       movie.watched = true;
     }
   }
-
 
   // Klick auf „Stern“ → Favorit toggeln + UI nachziehen
   async onToggleFavorite(movie: any, event: Event) {

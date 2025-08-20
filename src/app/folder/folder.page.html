@@ -84,7 +84,7 @@
           </ion-card-header>
           <ion-card-content>
             <!-- Favorit-Stempel -->
-            <div class="favorite-stamp" *ngIf="movie.favorite">
+            <div class="favorite-stamp" *ngIf="favoriteIdSet.has(movie.id)">
               <ion-icon name="thumbs-up"></ion-icon>
               <span>LIKE IT!</span>
             </div>
@@ -135,7 +135,7 @@
               </small>
             </div>
 
-            <div class="watched-banner" *ngIf="movie.watched">
+            <div class="watched-banner" *ngIf="watchedIdSet.has(movie.id)">
               <span>ALREADY WATCHED &nbsp;&nbsp; ALREADY WATCHED &nbsp;&nbsp; ALREADY WATCHED</span>
             </div>
           </ion-card-content>
