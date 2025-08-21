@@ -91,4 +91,9 @@ export class PreferencesService {
     await Preferences.set({ key: KEYS.HISTORY, value: JSON.stringify([]) });
   }
 
+  //Favoriten löschen
+  async clearFavorites(): Promise<void> {
+    await Preferences.set({ key: KEYS.FAVORITES, value: JSON.stringify([]) });
+  }
+
 }

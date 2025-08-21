@@ -3,6 +3,7 @@ import { PreferencesService } from '../services/preferences.service';
 import { MovieService } from '../services/movie.service';
 import { firstValueFrom, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { AlertController } from '@ionic/angular';
 
 type MovieCard = { id: number; title?: string; poster_path?: string; vote_average?: number };
 
@@ -19,6 +20,8 @@ export class HistoryPage implements OnInit {
   historyIds: number[] = [];
   historyMovies: MovieCard[] = [];
   loading = false;
+
+  constructor(private alertController: AlertController) { }
 
   async ngOnInit() {
     await this.loadHistory();
@@ -66,9 +69,30 @@ export class HistoryPage implements OnInit {
   }
 
   async onClearHistory() {
-    await this.preferences.clearHistory();
-    await this.loadHistory();
+    const alert = await this.alertController.create({
+      header: 'Verlauf löschen',
+      message: 'Möchtest du wirklich den gesamten Verlauf löschen?',
+      buttons: [
+        { text: 'Abbrechen', role: 'cancel' },
+        { text: 'Löschen', role: 'confirm' },
+      ],
+    });
+
+    await alert.present();
+    const { role } = await alert.onDidDismiss();
+
+    if (role === 'confirm') {
+      await this.preferences.clearHistory();
+      await this.loadHistory();
+      const done = await this.alertController.create({
+        header: 'Gelöscht',
+        message: 'Der Verlauf wurde entfernt.',
+        buttons: ['OK'],
+      });
+      await done.present();
+    }
   }
+
 
   async onRefresh(event: CustomEvent) {
     try {

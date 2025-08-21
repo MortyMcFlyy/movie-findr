@@ -3,10 +3,9 @@ import { PreferencesService } from '../services/preferences.service';
 import { MovieService } from '../services/movie.service';
 import { firstValueFrom, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-
+import { AlertController } from '@ionic/angular';
 
 type MovieCard = { id: number; title?: string; poster_path?: string; vote_average?: number };
-
 
 @Component({
   selector: 'app-favorites',
@@ -21,6 +20,8 @@ export class FavoritesPage implements OnInit {
   favoriteIds: number[] = [];
   favoriteMovies: MovieCard[] = [];
   loading = false;
+
+  constructor(private alertController: AlertController) { }
 
   async ngOnInit() {
     await this.loadFavorites();
@@ -72,7 +73,33 @@ export class FavoritesPage implements OnInit {
     await this.preferences.toggleFavorite(id);
     await this.loadFavorites(); // Liste aktualisieren
   }
-  
+
+
+  async onClearFavorites() {
+    const alert = await this.alertController.create({
+      header: 'Favoriten löschen',
+      message: 'Möchtest du wirklich alle Favoriten löschen?',
+      buttons: [
+        { text: 'Abbrechen', role: 'cancel' },
+        { text: 'Löschen', role: 'confirm' },
+      ],
+    });
+
+    await alert.present();
+    const { role } = await alert.onDidDismiss();
+
+    if (role === 'confirm') {
+      await this.preferences.clearFavorites();
+      await this.loadFavorites();
+      const done = await this.alertController.create({
+        header: 'Gelöscht',
+        message: 'Favoriten wurden entfernt.',
+        buttons: ['OK'],
+      });
+      await done.present();
+    }
+  }
+
   async onRefresh(event: CustomEvent) {
     try {
       await this.loadFavorites();

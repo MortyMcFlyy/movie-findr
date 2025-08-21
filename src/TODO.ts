@@ -1,13 +1,8 @@
 // TODO
-// lokale DB für die favoriten und history, statistiken, Zustimmung Geolocation
+// lokale DB --> Zustimmung Geolocation
 // GeoLocation-Service (generate Befehl)
 // Accounteinstellungen ? zB FSK
 // Alles Hübsch machen
-// History page
-// Favoriten page
-// Favoriten und History in der DB speichern
-//Scrolling lädt nicht neu sondern springt wieder nach oben?
-
 
 
 
@@ -24,9 +19,12 @@
 
 //DONE:
 //Availability auf Cards ergänzen
-
+//Scrolling lädt nicht neu sondern springt wieder nach oben?
+// lokale DB für die favoriten und history, statistiken,
 
 // Cards um favorisieren-Button ergänzen ->persistieren in der DB
 // Cards um gesehen-Button ergänzen -> persistieren in der DB
 //reshuffle der Cards on vibesearching
-
+// History page
+// Favoriten page
+// Favoriten und History in der DB speichern
