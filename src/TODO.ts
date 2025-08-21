@@ -12,9 +12,7 @@
 
 
 // Verena
-// Bei Genres --> auch noch andere Kategorien (Best of All Time, Alle Filme,.. )
-//     --> Filtermöglichkeiten (Filmlänge, FSK, gesehen?, Streamingprovider...) die über die Kategorien hinweg eingstellt bleiben
-// does the dog die API
+// does the dog die API -->https://www.doesthedogdie.com/ --> gibts zumindest, ist auch kostenlos aber erstmal sind andere Dinge wichtiger 
 // fuzzy search
 
 //DONE:
@@ -28,3 +26,5 @@
 // History page
 // Favoriten page
 // Favoriten und History in der DB speichern
+// Bei Genres --> auch noch andere Kategorien (Best of All Time, Alle Filme,.. )
+//     --> Filtermöglichkeiten (Filmlänge, FSK, gesehen?, Streamingprovider...) die über die Kategorien hinweg eingstellt bleiben
