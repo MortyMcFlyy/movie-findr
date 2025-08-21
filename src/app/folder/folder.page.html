@@ -7,8 +7,8 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-item>
+<ion-content [fullscreen]="true" [forceOverscroll]="false">
+    <ion-item>
     <ion-input [(ngModel)]="searchTerm" placeholder="Filmname eingeben"></ion-input>
     <ion-button (click)="search()">Suchen</ion-button>
   </ion-item>

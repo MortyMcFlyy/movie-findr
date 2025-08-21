@@ -155,7 +155,7 @@ export class FolderPage implements OnInit {
 
 
   loadMoreData(event: any) {
-    if (this.currentPage >= this.totalPages) {
+    if (this.currentPage >= this.totalPages && this.totalPages > 0) {
       event.target.complete();
       event.target.disabled = true;
       return;
@@ -163,13 +163,36 @@ export class FolderPage implements OnInit {
 
     this.currentPage++;
 
-    if (Object.keys(this.filterState).length > 0) {
+    // Hilfsfunktion
+    const finish = (res: any) => {
+      // Ergebnisse anhängen
+      this.movies = [...this.movies, ...(res?.results ?? [])];
+      // Gesamtseiten aktualisieren
+      if (typeof res?.total_pages === 'number') {
+        this.totalPages = res.total_pages;
+      }
+
+      this.loadProvidersForMovies();
+      this.loadWatchedMovies();
+      this.loadFavoriteMovies();
+
+      // Infinite Scroll  abschließen
+      event.target.complete();
+    };
+
+    const onError = () => {
+      event.target.complete();
+    };
+
+
+    // Filter-Suche 
+    if (Object.keys(this.filterState ?? {}).length > 0) {
       const options: any = {
         page: this.currentPage,
         include_adult: false
       };
 
-      // Gleiche Filterlogik wie in applyFilters()
+      // Runtime-Filter
       if (this.filterState.runtime) {
         if (this.filterState.runtime === '<90') {
           options['with_runtime.lte'] = 89;
@@ -180,58 +203,74 @@ export class FolderPage implements OnInit {
           options['with_runtime.gte'] = 121;
         }
       }
-
+      // Rating / Votes / Sprache / Jahrzehnt
       if (this.filterState.rating) {
         options['vote_average.gte'] = parseFloat(this.filterState.rating);
       }
-
       if (this.filterState.voteCount) {
         options['vote_count.gte'] = parseInt(this.filterState.voteCount, 10);
       }
-
       if (this.filterState.language) {
         options['with_original_language'] = this.filterState.language;
       }
-
       if (this.filterState.decade) {
         const year = this.filterState.decade;
         if (year === 'older') {
           options['primary_release_date.lte'] = '1979-12-31';
         } else {
           options['primary_release_date.gte'] = `${year}-01-01`;
-          options['primary_release_date.lte'] = `${parseInt(year) + 9}-12-31`;
+          options['primary_release_date.lte'] = `${parseInt(year, 10) + 9}-12-31`;
         }
       }
 
-      // Genre-ID setzen, wenn vorhanden
+      // Genre in Filter übernehmen 
       if (this.currentGenreId) {
         options.with_genres = this.currentGenreId;
       }
 
-      this.movieService.discoverMovies(options).subscribe((res: any) => {
-        this.movies = [...this.movies, ...res.results];
-        this.totalPages = res.total_pages;
-        event.target.complete();
-      });
-
-    } else if (this.currentGenreId) {
-      this.searchByGenre(this.currentGenreId);
-      event.target.complete();
-    } else if (this.currentCategoryId) {
-      this.searchByCategory(this.currentCategoryId);
-      event.target.complete();
-    } else if (this.searchTerm) {
-      this.movieService.searchMovies(this.searchTerm, this.currentPage).subscribe((res: any) => {
-        this.movies = [...this.movies, ...res.results];
-        event.target.complete();
-      });
-    } else {
-      event.target.complete();
+      this.movieService.discoverMovies(options).subscribe(finish, onError);
+      return;
     }
 
-    this.loadProvidersForMovies();
-    this.loadWatchedMovies();
-    this.loadFavoriteMovies();
+    // Genre-Paging 
+    if (this.currentGenreId) {
+      this.movieService
+        .discoverMovies({
+          page: this.currentPage,
+          with_genres: this.currentGenreId,
+          include_adult: false
+        })
+        .subscribe(finish, onError);
+      return;
+    }
+
+
+    // Kategorie-Paging 
+    if (this.currentCategoryId) {
+      switch (this.currentCategoryId) {
+        case 'popular':
+          this.movieService.getPopularMovies(this.currentPage).subscribe(finish, onError);
+          break;
+        case 'top-rated':
+          this.movieService.getTopRatedMovies(this.currentPage).subscribe(finish, onError);
+          break;
+        case 'trending':
+          this.movieService.getTrendingMovies('week', this.currentPage).subscribe(finish, onError);
+          break;
+        default:
+          this.movieService.discoverMovies({ page: this.currentPage, include_adult: false }).subscribe(finish, onError);
+      }
+      return;
+    }
+
+    // Suchbegriff-Paging
+    if (this.searchTerm) {
+      this.movieService.searchMovies(this.searchTerm, this.currentPage).subscribe(finish, onError);
+      return;
+    }
+
+    // Fallback
+    event.target.complete();
   }
 
   async openFilterPopover(ev: Event) {
