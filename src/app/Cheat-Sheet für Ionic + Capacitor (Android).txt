@@ -1,0 +1,5 @@
+Änderungen am UI/Code (HTML, SCSS, TS)
+npm run android:dev
+
+Änderungen an Plugins oder capacitor.config.ts
+npm run android:dev:sync

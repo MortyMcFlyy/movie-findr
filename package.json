@@ -9,7 +9,13 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "android:build": "ng build",
+    "android:copy": "cap copy android",
+    "android:sync": "cap sync android",
+    "android:run": "cap run android",
+    "android:dev": "npm run android:build && npm run android:copy && npm run android:run",
+    "android:dev:sync": "npm run android:build && npm run android:sync && npm run android:run"
   },
   "private": true,
   "dependencies": {
