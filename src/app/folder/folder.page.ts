@@ -20,7 +20,9 @@ export class FolderPage implements OnInit {
   public folder!: string;
   searchTerm: string = '';
   movies: any[] = [];
-  filterState: any = {};
+  filterState: any = {
+    hideWatched: true,      // gesehene standardmäßig ausblenden
+  };
   currentGenreId: number | null = null;
   currentGenreName: string | null = null;
   currentCategoryId: string | null = null;
@@ -73,6 +75,11 @@ export class FolderPage implements OnInit {
     // Load both statuses after movies are loaded
     this.loadWatchedMovies();
     this.loadFavoriteMovies();
+
+    // Default: gesehene ausblenden 
+    if (this.filterState.hideWatched === undefined) {
+      this.filterState.hideWatched = true;
+    }
   }
 
   search() {
@@ -86,7 +93,7 @@ export class FolderPage implements OnInit {
     this.currentCategoryId = null
 
     this.movieService.searchMovies(this.searchTerm).subscribe((res: any) => {
-      this.movies = res.results;
+      this.movies = this.applyLocalUserFilters(res.results);
       this.loadProvidersForMovies();
       this.loadWatchedMovies();
       this.loadFavoriteMovies();
@@ -153,7 +160,6 @@ export class FolderPage implements OnInit {
     }
   }
 
-
   loadMoreData(event: any) {
     if (this.currentPage >= this.totalPages && this.totalPages > 0) {
       event.target.complete();
@@ -166,7 +172,9 @@ export class FolderPage implements OnInit {
     // Hilfsfunktion
     const finish = (res: any) => {
       // Ergebnisse anhängen
-      this.movies = [...this.movies, ...(res?.results ?? [])];
+      const filteredBatch = this.applyLocalUserFilters(res?.results ?? []);
+      this.movies = [...this.movies, ...filteredBatch];
+
       // Gesamtseiten aktualisieren
       if (typeof res?.total_pages === 'number') {
         this.totalPages = res.total_pages;
@@ -415,12 +423,28 @@ export class FolderPage implements OnInit {
     }
 
     this.movieService.discoverMovies(options).subscribe((res: any) => {
-      this.movies = res.results;
+      this.movies = this.applyLocalUserFilters(res.results);
       this.totalPages = res.total_pages;
       this.loadProvidersForMovies();
       this.loadWatchedMovies();
       this.loadFavoriteMovies();
     });
+  }
+
+  private applyLocalUserFilters(results: any[]): any[] {
+    let visible = results ?? [];
+
+    // 1) Gesehene ausblenden (Standard = true)
+    if (this.filterState.hideWatched !== false) {
+      visible = visible.filter(m => !this.watchedIdSet.has(m.id));
+    }
+
+    // 2) Nur Favoriten (optional)
+    if (this.filterState.favoritesOnly) {
+      visible = visible.filter(m => this.favoriteIdSet.has(m.id));
+    }
+
+    return visible;
   }
 
   private fetchWithOrWithoutFilter(options: any) {
@@ -441,7 +465,13 @@ export class FolderPage implements OnInit {
   }
 
   clearSingleFilter(key: string) {
-    delete this.filterState[key];
+    if (key === 'hideWatched') {
+      this.filterState.hideWatched = false; // statt löschen -> explizit AUS
+    } else if (key === 'favoritesOnly') {
+      this.filterState.favoritesOnly = false;
+    } else {
+      delete this.filterState[key];
+    }
     this.applyFilters();
   }
 
@@ -478,8 +508,16 @@ export class FolderPage implements OnInit {
   }
 
   hasActiveFilters(): boolean {
-    return this.filterState && Object.keys(this.filterState).length > 0;
+    const fs = this.filterState || {};
+    return Object.keys(fs).some((key) => {
+      if (key === 'hideWatched') {
+        // Abweichung vom Default
+        return fs.hideWatched === false;
+      }
+      return !!fs[key]; 
+    });
   }
+
 
   clearAllFilters() {
     for (const key in this.filterState) {
@@ -520,16 +558,21 @@ export class FolderPage implements OnInit {
   async loadWatchedMovies() {
     const historyIds = await this.prefs.getHistory();
     this.watchedIdSet = new Set(historyIds);
+    this.reapplyLocalFiltersIfReady();
+
 
     // Flag pro Movie für UI
     this.movies.forEach(movie => {
       movie.watched = this.watchedIdSet.has(movie.id);
     });
   }
+
   // method to load favorite status
   async loadFavoriteMovies() {
     this.favoriteIds = await this.prefs.getFavorites();
     this.favoriteIdSet = new Set(this.favoriteIds);
+    this.reapplyLocalFiltersIfReady();
+
 
     // Flag pro Movie
     this.movies.forEach(movie => {
@@ -560,5 +603,12 @@ export class FolderPage implements OnInit {
     await this.prefs.toggleFavorite(movie.id);
     await this.loadFavoriteMovies();           // IDs neu lesen und Flags setzen
   }
+
+  private reapplyLocalFiltersIfReady(): void {
+    if (this.movies?.length) {
+      this.movies = this.applyLocalUserFilters(this.movies);
+    }
+  }
+
 
 }

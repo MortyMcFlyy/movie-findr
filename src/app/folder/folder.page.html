@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" [forceOverscroll]="false">
-    <ion-item>
+  <ion-item>
     <ion-input [(ngModel)]="searchTerm" placeholder="Filmname eingeben"></ion-input>
     <ion-button (click)="search()">Suchen</ion-button>
   </ion-item>
@@ -57,10 +57,23 @@
       <ion-icon name="close-circle" (click)="clearSingleFilter('decade')"></ion-icon>
     </ion-chip>
 
+    <ion-chip color="secondary" *ngIf="filterState.favoritesOnly">
+      <ion-label>Nur Favoriten</ion-label>
+      <ion-icon name="close-circle" (click)="clearSingleFilter('favoritesOnly')"></ion-icon>
+    </ion-chip>
+
+    <ion-chip color="secondary" *ngIf="filterState.hideWatched === false">
+      <ion-label>Gesehene anzeigen</ion-label>
+      <ion-icon name="close-circle" (click)="clearSingleFilter('hideWatched')"></ion-icon>
+    </ion-chip>
+
     <ion-chip color="medium" *ngIf="hasActiveFilters()" (click)="clearAllFilters()">
       <ion-icon name="close-circle"></ion-icon>
       <ion-label>Alle Filter entfernen</ion-label>
     </ion-chip>
+
+
+
 
   </div>
 

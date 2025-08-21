@@ -47,6 +47,22 @@
         </ion-select>
     </ion-item>
 
+    <!-- Persönliche Filter -->
+    <ion-item>
+        <ion-label>Gesehene ausblenden</ion-label>
+        <ion-toggle [checked]="filters.hideWatched !== false"
+            (ionChange)="updateFilter('hideWatched', $event.detail.checked)">
+        </ion-toggle>
+    </ion-item>
+
+    <ion-item>
+        <ion-label>Nur Favoriten</ion-label>
+        <ion-toggle [checked]="!!filters.favoritesOnly"
+            (ionChange)="updateFilter('favoritesOnly', $event.detail.checked)">
+        </ion-toggle>
+    </ion-item>
+
+
     <ion-button expand="block" color="primary" (click)="popoverController.dismiss()">
         Filter anwenden
     </ion-button>
