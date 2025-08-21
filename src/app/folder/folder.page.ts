@@ -213,15 +213,37 @@ export class FolderPage implements OnInit {
       if (this.filterState.language) {
         options['with_original_language'] = this.filterState.language;
       }
-      if (this.filterState.decade) {
-        const year = this.filterState.decade;
-        if (year === 'older') {
-          options['primary_release_date.lte'] = '1979-12-31';
-        } else {
-          options['primary_release_date.gte'] = `${year}-01-01`;
-          options['primary_release_date.lte'] = `${parseInt(year, 10) + 9}-12-31`;
-        }
+      // Jahrzehnte -> zu einem Zeitraum mergen
+      if (this.filterState.decade?.length) {
+        const decades = Array.isArray(this.filterState.decade)
+          ? this.filterState.decade
+          : [this.filterState.decade];
+
+        type DecadeRange = { gte: string | null; lte: string | null };
+
+        const ranges: DecadeRange[] = decades.map((dec: string) => {
+          if (dec === 'older') {
+            return { gte: null, lte: '1979-12-31' };
+          }
+          const start = `${dec}-01-01`;
+          const end = `${parseInt(dec, 10) + 9}-12-31`;
+          return { gte: start, lte: end };
+        });
+
+        const gtes = ranges
+          .map((range: DecadeRange) => range.gte)
+          .filter((date): date is string => !!date)
+          .sort(); // ISO-Date Strings sortierbar
+
+        const ltes = ranges
+          .map((range: DecadeRange) => range.lte)
+          .filter((date): date is string => !!date)
+          .sort();
+
+        if (gtes.length) options['primary_release_date.gte'] = gtes[0];
+        if (ltes.length) options['primary_release_date.lte'] = ltes[ltes.length - 1];
       }
+
 
       // Genre in Filter übernehmen 
       if (this.currentGenreId) {
@@ -319,18 +341,6 @@ export class FolderPage implements OnInit {
       options['vote_count.gte'] = parseInt(this.filterState.voteCount, 10);
     }
 
-    // // Mapping der Filter auf TMDb-API-Parameter
-    // if (this.filterState.runtime) {
-    //   if (this.filterState.runtime === '<90') {
-    //     options['with_runtime.lte'] = 89;
-    //   } else if (this.filterState.runtime === '90-120') {
-    //     options['with_runtime.gte'] = 90;
-    //     options['with_runtime.lte'] = 120;
-    //   } else if (this.filterState.runtime === '>120') {
-    //     options['with_runtime.gte'] = 121;
-    //   }
-    // }
-
     // Laufzeit 
     const runtimeFilters: any[] = [];
     if (this.filterState.runtime?.length) {
@@ -346,20 +356,38 @@ export class FolderPage implements OnInit {
       });
     }
 
-    // Jahrzehnte
-    const decadeFilters: any[] = [];
+    // Jahrzehnte -> zu einem Zeitraum mergen
     if (this.filterState.decade?.length) {
-      const decades = Array.isArray(this.filterState.decade) ? this.filterState.decade : [this.filterState.decade];
-      decades.forEach((dec: string) => {
+      const decades = Array.isArray(this.filterState.decade)
+        ? this.filterState.decade
+        : [this.filterState.decade];
+
+      type DecadeRange = { gte: string | null; lte: string | null };
+
+      const ranges: DecadeRange[] = decades.map((dec: string) => {
         if (dec === 'older') {
-          decadeFilters.push({ lte: '1979-12-31' });
-        } else {
-          const start = `${dec}-01-01`;
-          const end = `${parseInt(dec, 10) + 9}-12-31`;
-          decadeFilters.push({ gte: start, lte: end });
+          return { gte: null, lte: '1979-12-31' };
         }
+        const start = `${dec}-01-01`;
+        const end = `${parseInt(dec, 10) + 9}-12-31`;
+        return { gte: start, lte: end };
       });
+
+      const gtes = ranges
+        .map((range: DecadeRange) => range.gte)
+        .filter((date): date is string => !!date)
+        .sort(); // ISO-Date Strings sortierbar
+
+      const ltes = ranges
+        .map((range: DecadeRange) => range.lte)
+        .filter((date): date is string => !!date)
+        .sort();
+
+      if (gtes.length) options['primary_release_date.gte'] = gtes[0];
+      if (ltes.length) options['primary_release_date.lte'] = ltes[ltes.length - 1];
     }
+
+
 
     // Genre beibehalten, wenn gesetzt
     if (this.currentCategoryId) {
