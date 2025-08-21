@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { MovieService } from '../services/movie.service';
 import { PopoverController } from '@ionic/angular';
 import { FilterPopoverComponent } from './filter-popover/filter-popover.component';
+import { PreferencesService } from '../services/preferences.service';
+import { ToastController } from '@ionic/angular';
 import { IonInfiniteScroll } from '@ionic/angular/standalone';
 //https://ionicframework.com/docs/api/infinite-scroll
 
@@ -24,12 +26,19 @@ export class FolderPage implements OnInit {
   currentCategoryId: string | null = null;
   currentPage: number = 1;
   totalPages: number = 0;
+  favoriteIds: number[] = [];
+  favoriteIdSet = new Set<number>();
+  watchedIdSet = new Set<number>();
+
 
   private activatedRoute = inject(ActivatedRoute);
   constructor(
     private movieService: MovieService,
-    private popoverController: PopoverController
+    private popoverController: PopoverController,
+    private prefs: PreferencesService,
+    private toast: ToastController
   ) { }
+
 
   ngOnInit() {
     this.folder = this.activatedRoute.snapshot.paramMap.get('id') as string;
@@ -112,18 +121,29 @@ export class FolderPage implements OnInit {
         this.movieService.getPopularMovies(this.currentPage).subscribe((res: any) => {
           this.movies = [...this.movies, ...res.results];
           this.totalPages = res.total_pages;
+          this.loadProvidersForMovies();
+          this.loadWatchedMovies();
+          this.loadFavoriteMovies();
         });
         break;
+
       case 'top-rated':
         this.movieService.getTopRatedMovies(this.currentPage).subscribe((res: any) => {
           this.movies = [...this.movies, ...res.results];
           this.totalPages = res.total_pages;
+          this.loadProvidersForMovies();
+          this.loadWatchedMovies();
+          this.loadFavoriteMovies();
         });
         break;
+
       case 'trending':
         this.movieService.getTrendingMovies('week', this.currentPage).subscribe((res: any) => {
           this.movies = [...this.movies, ...res.results];
           this.totalPages = res.total_pages;
+          this.loadProvidersForMovies();
+          this.loadWatchedMovies();
+          this.loadFavoriteMovies();
         });
         break;
       case 'all':
@@ -313,7 +333,7 @@ export class FolderPage implements OnInit {
           options['vote_count.gte'] = options['vote_count.gte'] || 200; // Mindestanzahl Stimmen
           break;
         case 'trending':
-          options['sort_by'] = 'popularity.desc'; 
+          options['sort_by'] = 'popularity.desc';
           break;
         case 'all':
           // Keine spezielle Sortierung TODO: zufällige sortierung?
@@ -330,6 +350,9 @@ export class FolderPage implements OnInit {
     this.movieService.discoverMovies(options).subscribe((res: any) => {
       this.movies = res.results;
       this.totalPages = res.total_pages;
+      this.loadProvidersForMovies();
+      this.loadWatchedMovies();
+      this.loadFavoriteMovies();
     });
   }
 
@@ -343,6 +366,9 @@ export class FolderPage implements OnInit {
       }).subscribe((res: any) => {
         this.movies = [...this.movies, ...res.results];
         this.totalPages = res.total_pages;
+        this.loadProvidersForMovies();
+        this.loadWatchedMovies();
+        this.loadFavoriteMovies();
       });
     }
   }
@@ -404,7 +430,7 @@ export class FolderPage implements OnInit {
             // The API returns providers by country, we'll use US or fallback to first available
             const results = response.results || {};
             const countryData = results['US'] || results[Object.keys(results)[0]];
-            
+
             // Get flatrate (streaming) providers if available
             if (countryData && countryData.flatrate) {
               movie.providers = countryData.flatrate.slice(0, 5); // Limit to 5 providers
@@ -423,67 +449,49 @@ export class FolderPage implements OnInit {
     });
   }
 
-  toggleWatched(movie: any, event: Event) {
-    // Prevent event from propagating to card click handler if you have one
-    event.stopPropagation();
-    
-    // Toggle watched status
-    movie.watched = !movie.watched;
-    
-    // Save to local storage
-    this.saveWatchedMovies();
-  }
+  // method to load watched status
+  async loadWatchedMovies() {
+    const historyIds = await this.prefs.getHistory();
+    this.watchedIdSet = new Set(historyIds);
 
-  // Add method to save watched movies
-  saveWatchedMovies() {
-    // Get current list of watched movie IDs
-    const watchedMovies = this.movies
-      .filter(movie => movie.watched)
-      .map(movie => movie.id);
-      
-    // Save to localStorage
-    localStorage.setItem('watchedMovies', JSON.stringify(watchedMovies));
-  }
-
-  // Add method to load watched status
-  loadWatchedMovies() {
-    const watchedIds = JSON.parse(localStorage.getItem('watchedMovies') || '[]');
-    
-    // Mark movies as watched if their ID is in the saved list
+    // Flag pro Movie für UI
     this.movies.forEach(movie => {
-      movie.watched = watchedIds.includes(movie.id);
+      movie.watched = this.watchedIdSet.has(movie.id);
+    });
+  }
+  // method to load favorite status
+  async loadFavoriteMovies() {
+    this.favoriteIds = await this.prefs.getFavorites();
+    this.favoriteIdSet = new Set(this.favoriteIds);
+
+    // Flag pro Movie
+    this.movies.forEach(movie => {
+      movie.favorite = this.favoriteIdSet.has(movie.id);
     });
   }
 
-  toggleFavorite(movie: any, event: Event) {
-    // Prevent event from propagating to card click handler
+  // Toggle watchlist
+  async onMarkWatched(movie: any, event: Event) {
     event.stopPropagation();
-    
-    // Toggle favorite status
-    movie.favorite = !movie.favorite;
-    
-    // Save to local storage
-    this.saveFavoriteMovies();
+
+    const alreadyWatched = this.watchedIdSet.has(movie.id);
+
+    if (alreadyWatched) {
+      await this.prefs.removeFromHistory(movie.id);
+      this.watchedIdSet.delete(movie.id);
+      movie.watched = false;
+    } else {
+      await this.prefs.addToHistory(movie.id);
+      this.watchedIdSet.add(movie.id);
+      movie.watched = true;
+    }
   }
 
-  // Add method to save favorite movies
-  saveFavoriteMovies() {
-    // Get current list of favorite movie IDs
-    const favoriteMovies = this.movies
-      .filter(movie => movie.favorite)
-      .map(movie => movie.id);
-      
-    // Save to localStorage
-    localStorage.setItem('favoriteMovies', JSON.stringify(favoriteMovies));
+  // Klick auf „Stern“ → Favorit toggeln + UI nachziehen
+  async onToggleFavorite(movie: any, event: Event) {
+    event.stopPropagation();
+    await this.prefs.toggleFavorite(movie.id);
+    await this.loadFavoriteMovies();           // IDs neu lesen und Flags setzen
   }
 
-  // Add method to load favorite status
-  loadFavoriteMovies() {
-    const favoriteIds = JSON.parse(localStorage.getItem('favoriteMovies') || '[]');
-    
-    // Mark movies as favorite if their ID is in the saved list
-    this.movies.forEach(movie => {
-      movie.favorite = favoriteIds.includes(movie.id);
-    });
-  }
 }

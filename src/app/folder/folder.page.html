@@ -84,7 +84,7 @@
           </ion-card-header>
           <ion-card-content>
             <!-- Favorit-Stempel -->
-            <div class="favorite-stamp" *ngIf="movie.favorite">
+            <div class="favorite-stamp" *ngIf="favoriteIdSet.has(movie.id)">
               <ion-icon name="thumbs-up"></ion-icon>
               <span>LIKE IT!</span>
             </div>
@@ -95,24 +95,37 @@
                 <ion-badge color="primary">{{movie.vote_average | number:'1.1-1'}}</ion-badge>
               </div>
               <div class="action-buttons">
-                <ion-button fill="clear" size="small" (click)="toggleWatched(movie, $event)">
-                  <ion-icon [name]="movie.watched ? 'eye' : 'eye-outline'" slot="icon-only"></ion-icon>
+                <!-- Gesehen / Verlauf -->
+                <ion-button fill="clear" size="small" (click)="onMarkWatched(movie, $event)"
+                  aria-label="Als gesehen markieren">
+                  <ng-container *ngIf="watchedIdSet.has(movie.id); else notWatchedIcon">
+                    <ion-icon name="eye" slot="icon-only"></ion-icon>
+                  </ng-container>
+                  <ng-template #notWatchedIcon>
+                    <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+                  </ng-template>
                 </ion-button>
-                <ion-button fill="clear" size="small" (click)="toggleFavorite(movie, $event)">
-                  <ion-icon [name]="movie.favorite ? 'star' : 'star-outline'" slot="icon-only" 
-                            [color]="movie.favorite ? 'warning' : ''"></ion-icon>
+
+                <!-- Favorit -->
+                <ion-button fill="clear" size="small" (click)="onToggleFavorite(movie, $event)"
+                  aria-label="Favorit umschalten">
+                  <ng-container *ngIf="favoriteIdSet.has(movie.id); else notFavoriteIcon">
+                    <ion-icon name="star" slot="icon-only" color="warning"></ion-icon>
+                  </ng-container>
+                  <ng-template #notFavoriteIcon>
+                    <ion-icon name="star-outline" slot="icon-only"></ion-icon>
+                  </ng-template>
                 </ion-button>
               </div>
+
             </div>
 
             <div class="provider-section" *ngIf="movie.id">
               <small class="provider-title">Watch on:</small>
               <div class="provider-logos" *ngIf="movie.providers">
-                <img *ngFor="let provider of movie.providers" 
-                     [src]="'https://image.tmdb.org/t/p/original' + provider.logo_path" 
-                     [alt]="provider.provider_name"
-                     class="provider-logo"
-                     [title]="provider.provider_name">
+                <img *ngFor="let provider of movie.providers"
+                  [src]="'https://image.tmdb.org/t/p/original' + provider.logo_path" [alt]="provider.provider_name"
+                  class="provider-logo" [title]="provider.provider_name">
               </div>
               <div *ngIf="movie.providersLoading" class="loading-providers">
                 <ion-spinner name="dots" size="small"></ion-spinner>
@@ -121,8 +134,8 @@
                 No streaming options found
               </small>
             </div>
-            
-            <div class="watched-banner" *ngIf="movie.watched">
+
+            <div class="watched-banner" *ngIf="watchedIdSet.has(movie.id)">
               <span>ALREADY WATCHED &nbsp;&nbsp; ALREADY WATCHED &nbsp;&nbsp; ALREADY WATCHED</span>
             </div>
           </ion-card-content>
