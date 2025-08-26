@@ -3,6 +3,13 @@
 // GeoLocation-Service (generate Befehl)
 // Accounteinstellungen ? zB FSK
 // Alles Hübsch machen
+//     -> Splashscreen
+//     -> App Icon
+//     -> App Name
+//     -> Animationen
+//     -> Dark Mode/Light Mode
+//     -> Sonstiges UI/UX
+
 
 
 
