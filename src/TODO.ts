@@ -8,7 +8,8 @@
 
 // Felix
 // Vibe searching algorithmus anpassen + Streamingprovider + Geolocation neu anfragen?
-// Letterbox API ->ist angemailt
+// Letterbox API ->ist angemailt -> kommt aber keine antwort...
+// IOS Build mit XCode
 
 
 // Verena
