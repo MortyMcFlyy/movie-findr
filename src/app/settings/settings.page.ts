@@ -12,6 +12,7 @@ export class SettingsPage implements OnInit {
   private prefs = inject(PreferencesService);
 
   settings: Settings = { darkMode: false, fskLevel: '0' };
+  aboutOpen = false;
 
   constructor(private alertController: AlertController) { }
 
@@ -59,15 +60,8 @@ export class SettingsPage implements OnInit {
     }
   }
 
-
-
-  async openAbout() {
-    const alert = await this.alertController.create({
-      header: 'Über MovieFindr',
-      message: 'MovieFindr v1.0.0<br>Erstellt als Hausarbeit für Webanwendungen<br>© 2025',
-      buttons: ['OK']
-    });
-
-    await alert.present();
+  openAbout() {
+    this.aboutOpen = true;   // ← Modal öffnen
   }
+
 }

@@ -18,9 +18,7 @@
       <ion-item>
         <ion-icon name="moon-outline" slot="start"></ion-icon>
         <ion-label>Dark Mode</ion-label>
-        <ion-toggle
-          [checked]="settings.darkMode"
-          (ionChange)="onToggleDarkMode($event.detail.checked)">
+        <ion-toggle [checked]="settings.darkMode" (ionChange)="onToggleDarkMode($event.detail.checked)">
         </ion-toggle>
       </ion-item>
     </ion-item-group>
@@ -34,10 +32,7 @@
       <ion-item>
         <ion-icon name="eye-off-outline" slot="start"></ion-icon>
         <ion-label>Jugendschutz</ion-label>
-        <ion-select
-          [value]="settings.fskLevel"
-          interface="action-sheet"
-          placeholder="Wähle FSK-Level"
+        <ion-select [value]="settings.fskLevel" interface="action-sheet" placeholder="Wähle FSK-Level"
           (ionChange)="onChangeFsk($event.detail.value)">
           <ion-select-option value="0">Alle anzeigen</ion-select-option>
           <ion-select-option value="6">FSK 6</ion-select-option>
@@ -54,11 +49,42 @@
         <ion-label>Über</ion-label>
       </ion-item-divider>
 
-      <ion-item button (click)="openAbout()">
+      <!-- Button zum Öffnen -->
+      <ion-item button detail (click)="openAbout()">
         <ion-icon name="information-circle-outline" slot="start"></ion-icon>
         <ion-label>Über MovieFindr</ion-label>
       </ion-item>
 
+      <!-- Das Modal -->
+      <ion-modal [isOpen]="aboutOpen" (didDismiss)="aboutOpen = false">
+        <ng-template>
+          <ion-header>
+            <ion-toolbar>
+              <ion-title>Über MovieFindr</ion-title>
+              <ion-buttons slot="end">
+                <ion-button (click)="aboutOpen = false">Schließen</ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+
+          <ion-content class="ion-padding">
+            <div class="about-wrap">
+              <div class="app-name">MovieFindr v1.0.0</div>
+              <div>Erstellt als Hausarbeit für Webanwendungen</div>
+              <div>© 2025</div>
+
+              <img src="assets/tmdb_logo.svg" alt="TMDB Logo" class="tmdb-logo" />
+
+              <div class="attr">
+                This application uses TMDB and the TMDB APIs but is not endorsed,
+                certified, or otherwise approved by TMDB.
+              </div>
+            </div>
+          </ion-content>
+        </ng-template>
+      </ion-modal>
+
+      <!-- Daten zurücksetzen -->
       <ion-item button (click)="clearData()">
         <ion-icon name="trash-outline" slot="start"></ion-icon>
         <ion-label>Daten zurücksetzen</ion-label>
