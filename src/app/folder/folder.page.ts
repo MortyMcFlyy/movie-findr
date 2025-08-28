@@ -384,7 +384,7 @@ export class FolderPage implements OnInit {
       const gtes = ranges
         .map((range: DecadeRange) => range.gte)
         .filter((date): date is string => !!date)
-        .sort(); // ISO-Date Strings sortierbar
+        .sort(); 
 
       const ltes = ranges
         .map((range: DecadeRange) => range.lte)
