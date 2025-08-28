@@ -83,31 +83,39 @@ export class VibesearchingPage implements OnInit {
   }
 
   findMoviesByVibes() {
-    // Erstelle ein Objekt für die API-Parameter
     const discoverParams: any = {
-      page: Math.floor(Math.random() * 5) + 1  // Mehr Seiten für größere Vielfalt
+      page: Math.floor(Math.random() * 5) + 1
     };
 
-    // 1. Genres basierend auf der ausgewählten Stimmung hinzufügen
+    // Genres basierend auf Stimmung
     if (this.selectedMood && this.moodToGenreMap[this.selectedMood]) {
       discoverParams.with_genres = this.moodToGenreMap[this.selectedMood].join('|');
     }
 
-    // 2. Filmdauerparameter hinzufügen
+    // Filmdauer
     if (this.selectedDuration === 'shortfilm') {
-      // Kurzfilme: unter 40 Minuten
-      discoverParams.with_runtime_lte = 40;
+      discoverParams['with_runtime.lte'] = 40;
     } else if (this.selectedDuration === 'short') {
-      // Kurze Filme: 40-90 Minuten
-      discoverParams.with_runtime_gte = 40;
-      discoverParams.with_runtime_lte = 90;
+      discoverParams['with_runtime.gte'] = 40;
+      discoverParams['with_runtime.lte'] = 90;
     } else if (this.selectedDuration === 'normal') {
-      // Normale Spielfilme: 90-120 Minuten
-      discoverParams.with_runtime_gte = 90;
-      discoverParams.with_runtime_lte = 120;
+      discoverParams['with_runtime.gte'] = 90;
+      discoverParams['with_runtime.lte'] = 120;
     } else if (this.selectedDuration === 'extended') {
-      // Überlange Filme: über 120 Minuten
-      discoverParams.with_runtime_gte = 120;
+      discoverParams['with_runtime.gte'] = 120;
+    }
+
+    // Einschränkung nur für Klassiker
+    if (this.selectedTimeframe === 'classic') {
+      discoverParams.primary_release_date_gte = '1970-01-01';
+      discoverParams.primary_release_date_lte = '2005-12-31';
+      discoverParams.vote_average_gte = 7.0;
+      discoverParams.vote_count_gte = 500;
+      discoverParams.sort_by = 'vote_average.desc';
+    } else if (this.selectedTimeframe === 'new') {
+      const currentYear = new Date().getFullYear();
+      const twoYearsAgo = currentYear - 2;
+      discoverParams.primary_release_date_gte = `${twoYearsAgo}-01-01`;
     }
     // Bei 'any' setzen wir keine Laufzeitbeschränkung
 
@@ -137,11 +145,8 @@ export class VibesearchingPage implements OnInit {
       // Filme der letzten 2 Jahre
       const twoYearsAgo = currentYear - 2;
       discoverParams.primary_release_date_gte = `${twoYearsAgo}-01-01`;
-    } else if (this.selectedTimeframe === 'classic') {
-      // Klassiker: älter als 15 Jahre
-      const classicYear = currentYear - 15;
-      discoverParams.primary_release_date_lte = `${classicYear}-12-31`;
     }
+    
 
     console.log('API-Parameter:', discoverParams);
     
@@ -200,15 +205,15 @@ export class VibesearchingPage implements OnInit {
 
     // Filmdauerparameter wiederherstellen
     if (this.selectedDuration === 'shortfilm') {
-      discoverParams.with_runtime_lte = 40;
+      discoverParams['with_runtime.lte'] = 40;
     } else if (this.selectedDuration === 'short') {
-      discoverParams.with_runtime_gte = 40;
-      discoverParams.with_runtime_lte = 90;
+      discoverParams['with_runtime.gte'] = 40;
+      discoverParams['with_runtime.lte'] = 90;
     } else if (this.selectedDuration === 'normal') {
-      discoverParams.with_runtime_gte = 90;
-      discoverParams.with_runtime_lte = 120;
+      discoverParams['with_runtime.gte'] = 90;
+      discoverParams['with_runtime.lte'] = 120;
     } else if (this.selectedDuration === 'extended') {
-      discoverParams.with_runtime_gte = 120;
+      discoverParams['with_runtime.gte'] = 120;
     }
 
     // Qualitätsfilter wiederherstellen
@@ -221,9 +226,13 @@ export class VibesearchingPage implements OnInit {
       const twoYearsAgo = currentYear - 2;
       discoverParams.primary_release_date_gte = `${twoYearsAgo}-01-01`;
     } else if (this.selectedTimeframe === 'classic') {
-      const classicYear = currentYear - 15;
-      discoverParams.primary_release_date_lte = `${classicYear}-12-31`;
+      discoverParams.primary_release_date_gte = '1970-01-01';
+      discoverParams.primary_release_date_lte = '2005-12-31';
+      discoverParams.vote_average_gte = 7.0;
+      discoverParams.vote_count_gte = 500;
+      discoverParams.sort_by = 'vote_average.desc';
     }
+
     
     // API erneut aufrufen
     this.movieService.discoverVibesearchMovies(discoverParams).subscribe(

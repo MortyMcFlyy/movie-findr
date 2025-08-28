@@ -101,12 +101,12 @@ export class MovieService {
     if (options.vote_count_gte) params['vote_count.gte'] = options.vote_count_gte;
     
     // Laufzeitparameter
-    if (options.with_runtime_gte) params['with_runtime.gte'] = options.with_runtime_gte;
-    if (options.with_runtime_lte) params['with_runtime.lte'] = options.with_runtime_lte;
+    if (options['with_runtime.lte']) params['with_runtime.lte'] = options['with_runtime.lte'];
+    if (options['with_runtime.gte']) params['with_runtime.gte'] = options['with_runtime.gte'];
     
     // Datumsparameter
-    if (options.primary_release_date_gte) params.primary_release_date_gte = options.primary_release_date_gte;
-    if (options.primary_release_date_lte) params.primary_release_date_lte = options.primary_release_date_lte;
+    if (options.primary_release_date_gte) params['primary_release_date.gte'] = options.primary_release_date_gte;
+    if (options.primary_release_date_lte) params['primary_release_date.lte'] = options.primary_release_date_lte;
         return this.http.get(`${this.baseUrl}/discover/movie`, { params });
   }
 
