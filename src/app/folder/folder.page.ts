@@ -384,7 +384,7 @@ export class FolderPage implements OnInit {
       const gtes = ranges
         .map((range: DecadeRange) => range.gte)
         .filter((date): date is string => !!date)
-        .sort(); // ISO-Date Strings sortierbar
+        .sort(); 
 
       const ltes = ranges
         .map((range: DecadeRange) => range.lte)
@@ -434,12 +434,12 @@ export class FolderPage implements OnInit {
   private applyLocalUserFilters(results: any[]): any[] {
     let visible = results ?? [];
 
-    // 1) Gesehene ausblenden (Standard = true)
+    // 1) Gesehene ausblenden
     if (this.filterState.hideWatched !== false) {
       visible = visible.filter(m => !this.watchedIdSet.has(m.id));
     }
 
-    // 2) Nur Favoriten (optional)
+    // 2) Nur Favoriten
     if (this.filterState.favoritesOnly) {
       visible = visible.filter(m => this.favoriteIdSet.has(m.id));
     }

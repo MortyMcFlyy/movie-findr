@@ -1,27 +1,26 @@
 // TODO
 // lokale DB --> Zustimmung Geolocation
-// GeoLocation-Service (generate Befehl)
-// Accounteinstellungen ? zB FSK
+// Accounteinstellungen FSK rausnehmen
+
+// Suchen mit ENTER
+
 // Alles Hübsch machen
 //     -> Splashscreen
 //     -> App Icon
 //     -> App Name
-//     -> Animationen
-//     -> Dark Mode/Light Mode
 //     -> Sonstiges UI/UX
 
 
-
-
 // Felix
-// Vibe searching algorithmus anpassen + Streamingprovider + Geolocation neu anfragen?
-// Letterbox API ->ist angemailt -> kommt aber keine antwort...
+// Vibe searching algorithmus anpassen + Geolocation?
+// --> Erscheinungsjahr passt nicht immer
 // IOS Build mit XCode
+// GeoLocation-Service abfragen (generate Befehl)
 
 
 // Verena
-// does the dog die API -->https://www.doesthedogdie.com/ --> gibts zumindest, ist auch kostenlos aber erstmal sind andere Dinge wichtiger 
 // fuzzy search
+// GeoLocation verarbeiten (ggfs. in lokale DB)
 
 //DONE:
 //Availability auf Cards ergänzen
