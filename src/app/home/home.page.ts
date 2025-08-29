@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { Geolocation } from '@capacitor/geolocation';
 
 
 
@@ -71,5 +72,10 @@ export class HomePage implements OnInit {
 
   navigateToMovieTitle(title: string) {
     this.router.navigate(['/folder/Inbox'], { queryParams: { q: title } });
+  }
+
+  async testLocation() {
+    const pos = await Geolocation.getCurrentPosition();
+    alert(`Latitude: ${pos.coords.latitude}, Longitude: ${pos.coords.longitude}`);
   }
 }
