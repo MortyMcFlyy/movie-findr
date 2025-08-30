@@ -7,7 +7,4 @@ npm run android:dev:sync
 
 npm run build
 npx cap sync android
-cd android
-./gradlew clean
-cd ..
-npx cap run android --target 55150DLAQ0027J
+npx cap run android --target 55150DLAQ0027J 

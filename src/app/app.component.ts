@@ -1,5 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { Platform } from '@ionic/angular';
+import { LocationService } from './services/location.service';
 import { PreferencesService } from './services/preferences.service';
 
 @Component({
@@ -36,12 +38,18 @@ export class AppComponent implements OnInit {
   ];
 
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private platform: Platform,
+    private location: LocationService
+  ) { }
 
   async ngOnInit() {
     // Einstellungen lesen & darkmode setzen
     const s = await this.prefs.getSettings();
     document.body.classList.toggle('dark', s.darkMode);
+    // Standort-Init nach Plattform-Ready
+    this.platform.ready().then(() => this.location.initOnAppStart());
   }
 
   // Navigation based on category type

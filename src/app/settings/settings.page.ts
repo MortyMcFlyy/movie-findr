@@ -1,6 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { AlertController } from '@ionic/angular';
+import { Observable } from 'rxjs';
+import { NativeSettings, AndroidSettings, IOSSettings } from 'capacitor-native-settings';
 import { PreferencesService, Settings } from '../services/preferences.service';
+import { LocationService } from '../services/location.service';
+import { LocationState } from '../services/location.service';
+
 
 @Component({
   selector: 'app-settings',
@@ -9,16 +14,21 @@ import { PreferencesService, Settings } from '../services/preferences.service';
   standalone: false,
 })
 export class SettingsPage implements OnInit {
+  state$!: Observable<LocationState>;
   private prefs = inject(PreferencesService);
 
   settings: Settings = { darkMode: false, fskLevel: '0' };
   aboutOpen = false;
 
-  constructor(private alertController: AlertController) { }
+  constructor(
+    private location: LocationService,
+    private alertController: AlertController
+  ) { }
 
   async ngOnInit() {
     this.settings = await this.prefs.getSettings();
     this.applyDarkMode(this.settings.darkMode);
+    this.state$ = this.location.state$; // für async pipe im Template
   }
 
   async onToggleDarkMode(enabled: boolean) {
@@ -63,5 +73,23 @@ export class SettingsPage implements OnInit {
   openAbout() {
     this.aboutOpen = true;   // ← Modal öffnen
   }
+
+  // Standort manuell aktualisieren 
+  onUpdateLocation() {
+    this.location.updateNow();
+  }
+
+  // System Einstellungen öffnen
+  async openAppSettings() {
+    try {
+      await NativeSettings.open({
+        optionAndroid: AndroidSettings.ApplicationDetails,
+        optionIOS: IOSSettings.About
+      });
+    } catch (e) {
+      console.warn('could not open native settings', e);
+    }
+  }
+
 
 }

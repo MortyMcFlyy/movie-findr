@@ -23,6 +23,32 @@
       </ion-item>
     </ion-item-group>
 
+    <!-- Gruppe: Standort -->
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>Standort</ion-label>
+      </ion-item-divider>
+
+      <ion-item>
+        <ion-label>
+          <h2>Status</h2>
+          <ng-container *ngIf="state$ | async as s">
+            <p>Berechtigung: <strong>{{ s.permission }}</strong></p>
+            <p>Land: <strong>{{ s.countryCode || '–' }}</strong></p>
+            <p>Zuletzt aktualisiert: {{ s.lastUpdated ? (s.lastUpdated | date:'short') : 'nie' }}</p>
+          </ng-container>
+        </ion-label>
+        <ion-button slot="end" (click)="onUpdateLocation()">Aktualisieren</ion-button>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Berechtigung verwalten</ion-label>
+        <ion-button slot="end" (click)="openAppSettings()">In App-Einstellungen</ion-button>
+      </ion-item>
+
+    </ion-item-group>
+
+
     <!-- Gruppe: Filter -->
     <ion-item-group>
       <ion-item-divider>
