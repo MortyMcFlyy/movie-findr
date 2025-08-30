@@ -1,4 +1,13 @@
 <ion-list>
+    <ion-item>
+        <ion-label>Provider-Filter</ion-label>
+        <ion-select [value]="filterMode" (ionChange)="updateFilterMode($event.detail.value)">
+            <ion-select-option value="all">Alle Provider im Land</ion-select-option>
+            <ion-select-option value="favorites">Nur Lieblings-Provider</ion-select-option>
+            <ion-select-option value="any">Nicht filtern</ion-select-option>
+        </ion-select>
+    </ion-item>
+
 
     <ion-item>
         <ion-label>Filmlänge</ion-label>
@@ -63,7 +72,8 @@
     </ion-item>
 
 
-    <ion-button expand="block" color="primary" (click)="popoverController.dismiss()">
+    <ion-button expand="block" color="primary" (click)="popoverController.dismiss({ filterMode: filterMode })">
         Filter anwenden
     </ion-button>
+
 </ion-list>

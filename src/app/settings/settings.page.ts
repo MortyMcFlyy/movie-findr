@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { NativeSettings, AndroidSettings, IOSSettings } from 'capacitor-native-settings';
+import { Preferences } from '@capacitor/preferences';
 import { PreferencesService, Settings } from '../services/preferences.service';
 import { LocationService } from '../services/location.service';
 import { LocationState } from '../services/location.service';
@@ -16,6 +17,11 @@ import { LocationState } from '../services/location.service';
 export class SettingsPage implements OnInit {
   state$!: Observable<LocationState>;
   private prefs = inject(PreferencesService);
+  favoriteProviders = new Set<string>(); 
+
+  favoriteProvidersList = [
+    'Netflix', 'Amazon Prime Video', 'Disney+', 'Apple TV', 'WOW', 'Hulu', 'Max'
+  ];
 
   settings: Settings = { darkMode: false, fskLevel: '0' };
   aboutOpen = false;
@@ -29,6 +35,8 @@ export class SettingsPage implements OnInit {
     this.settings = await this.prefs.getSettings();
     this.applyDarkMode(this.settings.darkMode);
     this.state$ = this.location.state$; // für async pipe im Template
+    await this.loadFavProviders();
+
   }
 
   async onToggleDarkMode(enabled: boolean) {
@@ -71,7 +79,7 @@ export class SettingsPage implements OnInit {
   }
 
   openAbout() {
-    this.aboutOpen = true;   // ← Modal öffnen
+    this.aboutOpen = true;
   }
 
   // Standort manuell aktualisieren 
@@ -91,5 +99,16 @@ export class SettingsPage implements OnInit {
     }
   }
 
+  async loadFavProviders() {
+    const res = await Preferences.get({ key: 'fav.providers' });
+    const arr = res.value ? JSON.parse(res.value) as string[] : [];
+    this.favoriteProviders = new Set(arr.map(s => s.trim()));
+  }
+
+  async toggleFavProvider(name: string, checked: boolean) {
+    if (checked) this.favoriteProviders.add(name);
+    else this.favoriteProviders.delete(name);
+    await Preferences.set({ key: 'fav.providers', value: JSON.stringify([...this.favoriteProviders]) });
+  }
 
 }

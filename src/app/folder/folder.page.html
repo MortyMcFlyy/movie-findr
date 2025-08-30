@@ -25,13 +25,25 @@
   </ion-item>
 
   <div class="ion-padding" *ngIf="currentGenreId || currentCategoryId || hasActiveFilters()">
+
     <!-- Kategorie/Gerne-Chip -->
     <ion-chip color="primary" *ngIf="currentGenreName">
       <ion-label>{{ currentGenreName }}</ion-label>
       <ion-icon name="close-circle" (click)="clearGenreOrCategory()"></ion-icon>
     </ion-chip>
 
+    <ion-chip color="primary" class="region-chip">
+      <ion-label>Region: {{ providerCountry }}</ion-label>
+    </ion-chip>
+
+
     <!-- Dynamische Filter-Chips -->
+    <ion-chip color="tertiary" *ngIf="filterMode !== 'all'">
+      <ion-label>
+        {{ filterMode === 'favorites' ? 'Nur Lieblings-Provider' : 'Keine Provider-Filter' }}
+      </ion-label>
+    </ion-chip>
+
     <ion-chip color="secondary" *ngIf="filterState.runtime">
       <ion-label>Filmlänge: {{ displayRuntime(filterState.runtime) }}</ion-label>
       <ion-icon name="close-circle" (click)="clearSingleFilter('runtime')"></ion-icon>
@@ -77,16 +89,16 @@
 
   </div>
 
-  <!-- <div class="ion-padding" *ngIf="currentGenreId || currentCategoryId">
-    <ion-chip color="primary">
-      <ion-label>{{ currentGenreName }}</ion-label>
-      <ion-icon name="close-circle" (click)="currentGenreId = null; currentCategoryId = null; movies = []"></ion-icon>
-    </ion-chip>
-  </div> -->
+  <!-- Leerzustand -->
+  <div class="ion-padding" *ngIf="visibleMovies.length === 0 && movies.length > 0">
+    <ion-text color="medium">
+      <p>Keine Treffer mit den aktuellen Provider-Filtern.</p>
+    </ion-text>
+  </div>
 
   <ion-grid>
     <ion-row>
-      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let movie of movies">
+      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let movie of visibleMovies">
         <ion-card class="movie-card" appLazyLoadProviders [movie]="movie">
           <img
             [src]="movie.poster_path ? 'https://image.tmdb.org/t/p/w300' + movie.poster_path : 'assets/images/movie-placeholder.jpg'"

@@ -2,8 +2,12 @@ import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MovieService } from '../services/movie.service';
 import { PopoverController } from '@ionic/angular';
+import { Preferences } from '@capacitor/preferences';
 import { FilterPopoverComponent } from './filter-popover/filter-popover.component';
 import { PreferencesService } from '../services/preferences.service';
+import { Subscription } from 'rxjs';
+import { LocationService, LocationState } from '../services/location.service';
+
 import { ToastController } from '@ionic/angular';
 import { IonInfiniteScroll } from '@ionic/angular/standalone';
 //https://ionicframework.com/docs/api/infinite-scroll
@@ -31,6 +35,13 @@ export class FolderPage implements OnInit {
   favoriteIds: number[] = [];
   favoriteIdSet = new Set<number>();
   watchedIdSet = new Set<number>();
+  private locSub?: Subscription;
+  providerCountry: string = 'US'; // Fallback
+  requireInMyCountry = true;
+  favoriteProviders = new Set<string>();
+  filterMode: 'all' | 'favorites' | 'any' = 'all';
+  visibleMovies: any[] = [];
+
 
 
   private activatedRoute = inject(ActivatedRoute);
@@ -38,17 +49,19 @@ export class FolderPage implements OnInit {
     private movieService: MovieService,
     private popoverController: PopoverController,
     private prefs: PreferencesService,
-    private toast: ToastController
+    private toast: ToastController,
+    private location: LocationService,
   ) { }
 
 
-  ngOnInit() {
+  async ngOnInit() {
     this.folder = this.activatedRoute.snapshot.paramMap.get('id') as string;
 
     // Check for genre query parameters
     this.activatedRoute.queryParams.subscribe((params) => {
       // Reset when parameters change
       this.movies = [];
+      this.visibleMovies = [...this.movies];
       this.currentPage = 1;
 
       if (params['genre']) {
@@ -76,10 +89,52 @@ export class FolderPage implements OnInit {
     this.loadWatchedMovies();
     this.loadFavoriteMovies();
 
+    const s1 = await Preferences.get({ key: 'mf.requireInMyCountry' });
+    if (s1.value !== null) this.requireInMyCountry = s1.value === 'true';
+
+    const s2 = await Preferences.get({ key: 'mf.filterMode' });
+    if (s2.value === 'favorites' || s2.value === 'any' || s2.value === 'all') {
+      this.filterMode = s2.value as any;
+    }
+
+
     // Default: gesehene ausblenden 
     if (this.filterState.hideWatched === undefined) {
       this.filterState.hideWatched = true;
     }
+    // Country Code aus Cache ziehen
+    this.location.getCachedCountryCode().then(cc => {
+      if (cc) this.providerCountry = cc;
+    });
+
+    // Auf Änderungen reagieren
+    this.locSub = this.location.state$.subscribe((s) => {
+      const newCC = s.countryCode ?? null;
+
+      if (s.permission !== 'granted') {
+        if (this.providerCountry !== 'US') {
+          this.providerCountry = 'US';
+          this.reloadProvidersForCurrentMovies();
+        }
+        return;
+      }
+
+      if (newCC && newCC !== this.providerCountry) {
+        this.providerCountry = newCC;
+        this.reloadProvidersForCurrentMovies();
+      }
+    });
+
+    const res = await Preferences.get({ key: 'fav.providers' });
+    const arr = res.value ? JSON.parse(res.value) as string[] : [];
+    this.favoriteProviders = new Set(arr.map(s => s.trim()));
+
+    (this.movies || []).forEach(m => this.applyProviderVisibilityForMovie(m));
+    this.rebuildVisibleMovies();
+  }
+
+  ngOnDestroy() {
+    this.locSub?.unsubscribe();
   }
 
   search() {
@@ -87,6 +142,7 @@ export class FolderPage implements OnInit {
 
     // Reset genre search when performing a text search
     this.movies = [];
+    this.visibleMovies = [...this.movies];
     this.currentPage = 1;
     this.currentGenreId = null;
     this.currentGenreName = null;
@@ -112,6 +168,7 @@ export class FolderPage implements OnInit {
     this.currentCategoryId = categoryId;
     this.currentGenreId = null;
     this.movies = [];
+    this.visibleMovies = [...this.movies];
     this.currentPage = 1;
 
     const hasActiveFilters = Object.keys(this.filterState).length > 0;
@@ -309,23 +366,26 @@ export class FolderPage implements OnInit {
       event: ev,
       translucent: true,
       componentProps: {
-        filters: this.filterState // Referenz, kein Clone!
+        filters: this.filterState,
+        filterMode: this.filterMode
       },
       showBackdrop: true,
       backdropDismiss: true
     });
 
-    await popover.present();
-
-    // applyFilters nur bei Dismiss (z. B. Reset oder manuelles Schließen)
-    popover.onDidDismiss().then(() => {
+    popover.onDidDismiss().then((res) => {
+      if (res.data && res.data.filterMode) {
+        this.filterMode = res.data.filterMode;
+      }
       this.applyFilters();
     });
 
+    await popover.present();
   }
 
   applyFilters() {
     this.movies = [];
+    this.visibleMovies = [...this.movies];
     this.currentPage = 1;
 
     const options: any = {
@@ -384,7 +444,7 @@ export class FolderPage implements OnInit {
       const gtes = ranges
         .map((range: DecadeRange) => range.gte)
         .filter((date): date is string => !!date)
-        .sort(); 
+        .sort();
 
       const ltes = ranges
         .map((range: DecadeRange) => range.lte)
@@ -480,6 +540,7 @@ export class FolderPage implements OnInit {
     this.currentCategoryId = null;
     this.currentGenreName = null;
     this.movies = [];
+    this.visibleMovies = [...this.movies];
     this.applyFilters();
   }
 
@@ -514,10 +575,9 @@ export class FolderPage implements OnInit {
         // Abweichung vom Default
         return fs.hideWatched === false;
       }
-      return !!fs[key]; 
+      return !!fs[key];
     });
   }
-
 
   clearAllFilters() {
     for (const key in this.filterState) {
@@ -527,34 +587,45 @@ export class FolderPage implements OnInit {
   }
 
   loadProvidersForMovies() {
-    this.movies.forEach(movie => {
-      if (movie.id && !movie.providers) {
-        // Only fetch if we have an ID and haven't already loaded providers
-        this.movieService.getProviders(movie.id).subscribe(
-          response => {
-            // The API returns providers by country, we'll use US or fallback to first available
-            const results = response.results || {};
-            const countryData = results['US'] || results[Object.keys(results)[0]];
+    const cc = this.providerCountry || 'US';
 
-            // Get flatrate (streaming) providers if available
-            if (countryData && countryData.flatrate) {
-              movie.providers = countryData.flatrate.slice(0, 5); // Limit to 5 providers
-            } else if (countryData && countryData.rent) {
-              movie.providers = countryData.rent.slice(0, 5); // Fallback to rent options
+    this.movies.forEach(movie => {
+      if (movie.id && !movie._providersRequested) {
+        movie._providersRequested = true; // schützt vor Doppelcalls
+
+        this.movieService.getProviders(movie.id).subscribe(
+          (response: any) => {
+            const results = response?.results || {};
+            const keys = Object.keys(results);
+            const countryData = results[cc] || (keys.length ? results[keys[0]] : null);
+
+            if (countryData?.flatrate?.length) {
+              movie.providers = countryData.flatrate.slice(0, 5);
+            } else if (countryData?.rent?.length) {
+              movie.providers = countryData.rent.slice(0, 5);
             } else {
-              movie.providers = []; // No providers available
+              movie.providers = []; // nichts verfügbar
             }
+
+            this.applyProviderVisibilityForMovie(movie);
+            this.rebuildVisibleMovies();
           },
-          error => {
+          (error: any) => {
             console.error(`Error fetching providers for movie ${movie.id}:`, error);
-            movie.providers = []; // Set empty array on error
+            movie.providers = [];
+            this.applyProviderVisibilityForMovie(movie);
+            this.rebuildVisibleMovies();
           }
         );
+      } else {
+        // Falls schon vorhanden (z. B. nach Region-Wechsel) einfach Sichtbarkeit neu prüfen
+        this.applyProviderVisibilityForMovie(movie);
       }
     });
+
+    this.rebuildVisibleMovies();
   }
 
-  // method to load watched status
   async loadWatchedMovies() {
     const historyIds = await this.prefs.getHistory();
     this.watchedIdSet = new Set(historyIds);
@@ -567,7 +638,6 @@ export class FolderPage implements OnInit {
     });
   }
 
-  // method to load favorite status
   async loadFavoriteMovies() {
     this.favoriteIds = await this.prefs.getFavorites();
     this.favoriteIdSet = new Set(this.favoriteIds);
@@ -610,5 +680,55 @@ export class FolderPage implements OnInit {
     }
   }
 
+  private reloadProvidersForCurrentMovies() {
+    this.movies.forEach(m => m.providers = undefined);
+    this.loadProvidersForMovies();
+  }
+
+  private applyProviderVisibilityForMovie(movie: any) {
+    // Nur im Land verfügbar
+    if (this.requireInMyCountry) {
+      if (!movie.providers || movie.providers.length === 0) {
+        movie._hiddenByProvider = true;
+        return;
+      }
+    }
+
+    // Edge Case: Modus "favorites", aber keine Lieblingsprovider gesetzt
+    if (this.filterMode === 'favorites' && this.favoriteProviders.size === 0) {
+      // Fallback: verhalte dich wie "all"
+      movie._hiddenByProvider = false;
+      return;
+    }
+
+    // Lieblingsprovider
+    if (this.filterMode === 'favorites') {
+      const hasFav = (movie.providers || []).some((p: any) =>
+        this.favoriteProviders.has(String(p.provider_name || '').trim())
+      );
+      movie._hiddenByProvider = !hasFav;
+      return;
+    }
+
+    // kein Filter
+    movie._hiddenByProvider = false;
+  }
+
+
+  private rebuildVisibleMovies() {
+    this.visibleMovies = (this.movies || []).filter(m => !m._hiddenByProvider);
+  }
+
+  onToggleInMyCountry(val: boolean) {
+    this.requireInMyCountry = val;
+    // Sichtbarkeit für alle bestehenden Filme neu anwenden
+    (this.movies || []).forEach(m => this.applyProviderVisibilityForMovie(m));
+    this.rebuildVisibleMovies();
+    // Optional: Zustand via Preferences persistieren
+  }
+
 
 }
+
+
+

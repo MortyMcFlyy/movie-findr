@@ -1,6 +1,6 @@
 // TODO
-// lokale DB --> Zustimmung Geolocation
-// Accounteinstellungen FSK rausnehmen
+
+// Accounteinstellungen FSK rausnehmen --> Darkmode auch ?
 
 // Suchen mit ENTER
 
@@ -9,20 +9,25 @@
 //     -> App Icon
 //     -> App Name
 //     -> Sonstiges UI/UX
+//  Aufm Handy ist die statusleiste noch über dem Menü!!
 
 
 // Felix
 // Vibe searching algorithmus anpassen + Geolocation?
 // --> Erscheinungsjahr passt nicht immer
 // IOS Build mit XCode
-// GeoLocation-Service abfragen (generate Befehl)
+
 
 
 // Verena
 // fuzzy search
-// GeoLocation verarbeiten (ggfs. in lokale DB)
+
 
 //DONE:
+// lokale DB --> Zustimmung Geolocation
+// Filter für streamingprovider mit Geolocation
+// GeoLocation-Service abfragen (generate Befehl)
+// GeoLocation verarbeiten (ggfs. in lokale DB)
 //Availability auf Cards ergänzen
 //Scrolling lädt nicht neu sondern springt wieder nach oben?
 // lokale DB für die favoriten und history, statistiken,

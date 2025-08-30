@@ -36,14 +36,26 @@ export class LocationService {
   async refreshPermissionAndMaybePrompt(): Promise<LocPermission> {
     const c = await Geolocation.checkPermissions();
     let perm: LocPermission = (c.location as any) ?? 'prompt';
+
     if (perm !== 'granted') {
       const r = await Geolocation.requestPermissions();
       perm = (r.location as any) ?? 'prompt';
     }
+
+    // Persistiere den Permission-Status
     await Preferences.set({ key: KEYS.perm, value: perm });
+
+    // Bei nicht erteilter Berechtigung ALLES zurücksetzen,
+    if (perm !== 'granted') {
+      await this.resetPersistedLocation('denied');
+      return perm;
+    }
+
+    // granted: Permission im State setzen (weitere Daten kommen aus fetchAndPersist / updateIfStale)
     this._state$.next({ ...this._state$.value, permission: perm });
     return perm;
   }
+
 
   // Manuelles Aktualisieren
   async updateNow() {
@@ -64,6 +76,23 @@ export class LocationService {
       this._state$.next({ ...this._state$.value, coords, countryCode: country ?? null, lastUpdated });
     }
   }
+
+  private async resetPersistedLocation(reason: 'denied' | 'error' = 'denied') {
+    // Persistenz leeren
+    await Preferences.remove({ key: KEYS.coords });
+    await Preferences.remove({ key: KEYS.country });
+    await Preferences.remove({ key: KEYS.updated });
+
+    // State zurücksetzen 
+    const perm = reason === 'denied' ? 'denied' : this._state$.value.permission;
+    this._state$.next({
+      permission: perm as LocPermission,
+      coords: null,
+      countryCode: null,
+      lastUpdated: null
+    });
+  }
+
 
   private async fetchAndPersist() {
     const pos = await Geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 10000 });
