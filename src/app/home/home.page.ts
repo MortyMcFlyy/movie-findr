@@ -30,7 +30,7 @@ export class HomePage implements OnInit {
   trendingMovies: any[] = [];
   recentlyViewed: any[] = [];
   movieNews: MovieNews[] = [];
-  
+
   // Update for Swiper format
   slideOpts = {
     initialSlide: 0,
@@ -45,7 +45,7 @@ export class HomePage implements OnInit {
   constructor(
     private movieService: MovieService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadTrendingMovies();
@@ -65,7 +65,7 @@ export class HomePage implements OnInit {
   navigateToMovie(id: number) {
     // In echter App würdest du zur Detailseite navigieren
     // Hier simulieren wir es mit einem Umweg über den Folder
-    this.router.navigate(['/folder', 'Inbox'], { 
+    this.router.navigate(['/folder', 'Inbox'], {
       queryParams: { movie: id }
     });
   }
@@ -74,8 +74,31 @@ export class HomePage implements OnInit {
     this.router.navigate(['/folder/Inbox'], { queryParams: { q: title } });
   }
 
+
+
   async testLocation() {
-    const pos = await Geolocation.getCurrentPosition();
-    alert(`Latitude: ${pos.coords.latitude}, Longitude: ${pos.coords.longitude}`);
+    try {
+      // 1) Check & request permission
+      const status = await Geolocation.checkPermissions();
+      if (status.location !== 'granted') {
+        const req = await Geolocation.requestPermissions();
+        if (req.location !== 'granted') {
+          alert('Standort-Berechtigung verweigert.');
+          return;
+        }
+      }
+
+      // 2) Position holen (mit Timeout & High Accuracy)
+      const pos = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 10000
+      });
+
+      alert(`Latitude: ${pos.coords.latitude}, Longitude: ${pos.coords.longitude}`);
+    } catch (err: any) {
+      console.error('Geolocation error', err);
+      alert('Fehler beim Standort: ' + (err?.message ?? JSON.stringify(err)));
+    }
   }
+
 }
