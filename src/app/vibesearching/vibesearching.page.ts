@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MovieService } from '../services/movie.service';
 import { AnimationController } from '@ionic/angular';
+import { PreferencesService } from '../services/preferences.service'; // <-- neu
 
 // Definieren Sie einen Typ für die erlaubten Stimmungen
 type Mood = 'happy' | 'relaxed' | 'thrilling' | 'horror' | 'love' | 'music' | 'documentary' | 'action';
@@ -22,7 +23,10 @@ export class VibesearchingPage implements OnInit {
   selectedTimeframe: string | null = null;
   results: any[] = [];
   isAnimating = false;
-  
+
+  // Favoriten-Set
+  favoriteIdSet: Set<number> = new Set<number>();
+
   // Mapping von Stimmungen zu Genre-IDs für die TMDB-API
   moodToGenreMap: Record<Mood, number[]> = {
     happy: [35, 10751, 16],
@@ -37,10 +41,13 @@ export class VibesearchingPage implements OnInit {
 
   constructor(
     private movieService: MovieService,
-    private animationCtrl: AnimationController
+    private animationCtrl: AnimationController,
+    private prefs: PreferencesService // <-- injizieren
   ) {}
 
-  ngOnInit() {}
+  async ngOnInit() {
+    await this.loadFavoritesSet();
+  }
 
   selectMood(mood: Mood) {
     if (this.isAnimating) return;
@@ -156,6 +163,7 @@ export class VibesearchingPage implements OnInit {
         if (res.results && res.results.length > 0) {
           this.results = this.getRandomSubset(res.results, 6);
           this.loadProvidersForMovies(); // Provider laden
+          this.loadFavoritesSet(); // Favoriten-Flags setzen
         } else {
           console.log('Keine Ergebnisse gefunden, versuche Fallback');
           this.loadFallbackResults();
@@ -178,6 +186,8 @@ export class VibesearchingPage implements OnInit {
   loadFallbackResults() {
     this.movieService.getPopularMovies().subscribe((res) => {
       this.results = res.results.slice(0, 6);
+      this.loadProvidersForMovies();
+      this.loadFavoritesSet();
     });
   }
 
@@ -240,6 +250,7 @@ export class VibesearchingPage implements OnInit {
         if (res.results && res.results.length > 0) {
           this.results = this.getRandomSubset(res.results, 6);
           this.loadProvidersForMovies(); // Provider laden
+          this.loadFavoritesSet(); // Favoriten-Flags setzen
         } else {
           this.loadFallbackResults();
         }
@@ -277,5 +288,49 @@ export class VibesearchingPage implements OnInit {
         }
       );
     });
+  }
+
+  // Favoriten-Helper
+  async loadFavoritesSet() {
+    try {
+      const ids = await this.prefs.getFavorites(); // erwartet number[]
+      this.favoriteIdSet = new Set(ids || []);
+      (this.results || []).forEach(m => m.favorite = this.favoriteIdSet.has(m.id));
+    } catch (e) {
+      console.warn('Could not load favorites', e);
+    }
+  }
+
+  // Toggle Favorite aus UI
+  async onToggleFavorite(movie: any, event: Event) {
+    event.stopPropagation();
+    try {
+      await this.prefs.toggleFavorite(movie.id);
+      // neu laden und flag setzen
+      const ids = await this.prefs.getFavorites();
+      this.favoriteIdSet = new Set(ids || []);
+      movie.favorite = this.favoriteIdSet.has(movie.id);
+
+      // Stamp kurz anzeigen, wenn gerade als Favorit markiert
+      if (movie.favorite) {
+        movie.showFavoriteStamp = true;
+        if ((movie as any)._stampTimeout) {
+          clearTimeout((movie as any)._stampTimeout);
+        }
+        (movie as any)._stampTimeout = setTimeout(() => {
+          movie.showFavoriteStamp = false;
+          delete (movie as any)._stampTimeout;
+        }, 1500);
+      } else {
+        // falls entfavorisiert, Stamp sofort ausblenden
+        movie.showFavoriteStamp = false;
+        if ((movie as any)._stampTimeout) {
+          clearTimeout((movie as any)._stampTimeout);
+          delete (movie as any)._stampTimeout;
+        }
+      }
+    } catch (e) {
+      console.error('Error toggling favorite', e);
+    }
   }
 }

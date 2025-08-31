@@ -150,8 +150,9 @@
       
       <ion-grid>
         <ion-row>
-          <ion-col size="12" size-md="6" size-lg="4" *ngFor="let movie of results">
-            <ion-card class="movie-card">
+          <ion-col size="12" size-md="6" size-lg="4" *ngFor="let movie of results; let i = index">
+            <!-- Card hat jetzt eine Template-Referenz (#card) und kann eine Fade-Klasse bekommen -->
+            <ion-card class="movie-card" #card [class.fading]="movie.fading">
               <img [src]="movie.poster_path ? 'https://image.tmdb.org/t/p/w300' + movie.poster_path : 'assets/images/movie-placeholder.jpg'" 
                    alt="{{movie.title}}"/>
               <ion-card-header>
@@ -162,7 +163,29 @@
                 <div class="rating" *ngIf="movie.vote_average">
                   <ion-badge>{{movie.vote_average | number:'1.1-1'}}</ion-badge>
                 </div>
-                
+
+                <!-- Aktion: Favorit + Schon gesehen -->
+                <div class="action-row">
+                  <div class="action-buttons" style="margin-left:auto; display:flex; gap:6px; align-items:center;">
+                    <!-- Schon gesehen Button -->
+                    <ion-button fill="clear" size="small" (click)="onMarkWatched(movie, $event, card)"
+                      aria-label="Als gesehen markieren" [disabled]="movie.watched">
+                      <ion-icon [name]="movie.watched ? 'checkmark-done' : 'checkmark-done-outline'" slot="icon-only" [color]="movie.watched ? 'success' : undefined"></ion-icon>
+                    </ion-button>
+
+                    <!-- Favorit -->
+                    <ion-button fill="clear" size="small" (click)="onToggleFavorite(movie, $event)"
+                      aria-label="Favorit umschalten">
+                      <ng-container *ngIf="favoriteIdSet.has(movie.id); else notFavorite">
+                        <ion-icon name="star" slot="icon-only" color="warning"></ion-icon>
+                      </ng-container>
+                      <ng-template #notFavorite>
+                        <ion-icon name="star-outline" slot="icon-only"></ion-icon>
+                      </ng-template>
+                    </ion-button>
+                  </div>
+                </div>
+
                 <!-- Provider-Section hinzufügen -->
                 <div class="provider-section" *ngIf="movie.id">
                   <small class="provider-title">Watch on:</small>
