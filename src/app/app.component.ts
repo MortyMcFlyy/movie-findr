@@ -25,18 +25,18 @@ export class AppComponent implements OnInit {
   // Kategorien 
   public categories = [
     // Spezielle Kategorien
-    { name: 'Alle Filme', type: 'category', id: 'all' },
-    { name: 'Beliebt', type: 'category', id: 'popular' },
-    { name: 'Bestbewertete', type: 'category', id: 'top-rated' },
-    { name: 'Aktuelle Trends', type: 'category', id: 'trending' },
+    { name: 'Alle Filme', type: 'category', id: 'all', icon: 'film' },
+    { name: 'Beliebt', type: 'category', id: 'popular', icon: 'trending-up' },
+    { name: 'Bestbewertete', type: 'category', id: 'top-rated', icon: 'star' },
+    { name: 'Aktuelle Trends', type: 'category', id: 'trending', icon: 'flame' },
 
     // Genres
-    { name: 'Action', type: 'genre', id: 28 },
-    { name: 'Komödie', type: 'genre', id: 35 },
-    { name: 'Drama', type: 'genre', id: 18 },
-    { name: 'Science Fiction', type: 'genre', id: 878 },
-    { name: 'Horror', type: 'genre', id: 27 },
-    { name: 'Animation', type: 'genre', id: 16 }
+    { name: 'Action', type: 'genre', id: 28, icon: 'flash' },
+    { name: 'Komödie', type: 'genre', id: 35, icon: 'happy' },
+    { name: 'Drama', type: 'genre', id: 18, icon: 'sad' },
+    { name: 'Science Fiction', type: 'genre', id: 878, icon: 'planet' },
+    { name: 'Horror', type: 'genre', id: 27, icon: 'skull' },
+    { name: 'Animation', type: 'genre', id: 16, icon: 'color-wand' }
   ];
 
 
@@ -79,6 +79,18 @@ export class AppComponent implements OnInit {
           name: category.name
         }
       });
+    }
+  }
+
+  // Fügen Sie diese Methode zur AppComponent-Klasse hinzu
+  isActiveCategoryOrGenre(category: any): boolean {
+    // URL-Parameter auslesen
+    const queryParams = new URLSearchParams(window.location.search);
+    
+    if (category.type === 'genre') {
+      return queryParams.get('genre') === category.id.toString();
+    } else {
+      return queryParams.get('category') === category.id;
     }
   }
 }

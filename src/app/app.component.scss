@@ -49,12 +49,17 @@ ion-menu.md ion-item {
   border-radius: 4px;
 }
 
+// Ausgewählte Elemente für Material Design (Android/Web)
 ion-menu.md ion-item.selected {
   --background: rgba(var(--ion-color-primary-rgb), 0.14);
+  --color: var(--ion-color-primary);
+  font-weight: 600;
 }
 
+// Icon für ausgewählte Elemente stärker hervorheben
 ion-menu.md ion-item.selected ion-icon {
   color: var(--ion-color-primary);
+  opacity: 1;
 }
 
 ion-menu.md ion-item ion-icon {
@@ -82,6 +87,14 @@ ion-menu.ios ion-item {
   --padding-start: 16px;
   --padding-end: 16px;
   --min-height: 50px;
+}
+
+// Für iOS-Stil
+ion-menu.ios ion-item.selected {
+  --background: rgba(var(--ion-color-primary-rgb), 0.1);
+  --color: var(--ion-color-primary);
+  font-weight: 600;
+  border-left: 3px solid var(--ion-color-primary);
 }
 
 ion-menu.ios ion-item.selected ion-icon {
@@ -116,6 +129,13 @@ ion-note {
 
 ion-item.selected {
   --color: var(--ion-color-primary);
+  font-weight: 600;
+}
+
+// Text in ausgewählten Elementen deutlicher hervorheben
+ion-item.selected ion-label {
+  color: var(--ion-color-primary);
+  font-weight: 600;
 }
 
 ion-item-divider {

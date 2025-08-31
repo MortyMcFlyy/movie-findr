@@ -27,8 +27,13 @@
 
           @for (category of categories; track category) {
             <ion-menu-toggle auto-hide="false">
-              <ion-item lines="none" button (click)="searchByCategory(category)">
-                <ion-icon aria-hidden="true" slot="start" ios="bookmark-outline" md="bookmark-sharp"></ion-icon>
+              <ion-item lines="none" button (click)="searchByCategory(category)" 
+                        [class.selected]="isActiveCategoryOrGenre(category)">
+                <ion-icon aria-hidden="true" slot="start" 
+                         [ios]="category.icon + '-outline'" 
+                         [md]="category.icon + '-sharp'"
+                         [color]="isActiveCategoryOrGenre(category) ? 'primary' : ''">
+                </ion-icon>
                 <ion-label>{{ category.name }}</ion-label>
               </ion-item>
             </ion-menu-toggle>
