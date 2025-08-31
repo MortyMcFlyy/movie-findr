@@ -154,8 +154,8 @@ export class VibesearchingPage implements OnInit {
     this.movieService.discoverVibesearchMovies(discoverParams).subscribe(
       (res) => {
         if (res.results && res.results.length > 0) {
-          // Erfolgsfall: Zufällig 6 Filme auswählen
           this.results = this.getRandomSubset(res.results, 6);
+          this.loadProvidersForMovies(); // Provider laden
         } else {
           console.log('Keine Ergebnisse gefunden, versuche Fallback');
           this.loadFallbackResults();
@@ -239,6 +239,7 @@ export class VibesearchingPage implements OnInit {
       (res) => {
         if (res.results && res.results.length > 0) {
           this.results = this.getRandomSubset(res.results, 6);
+          this.loadProvidersForMovies(); // Provider laden
         } else {
           this.loadFallbackResults();
         }
@@ -248,5 +249,33 @@ export class VibesearchingPage implements OnInit {
         this.loadFallbackResults();
       }
     );
+  }
+
+  loadProvidersForMovies() {
+    // Aktuelles Land für Provider (aus LocationService oder Default)
+    const countryCode = 'DE'; // Idealerweise vom LocationService
+
+    this.results.forEach(movie => {
+      // Ladezustand setzen
+      movie.providersLoading = true;
+      
+      this.movieService.getProviders(movie.id).subscribe(
+        (data) => {
+          // Provider für das aktuelle Land oder Fallback auf US
+          const providers = 
+            data.results[countryCode]?.flatrate || 
+            data.results['US']?.flatrate || 
+            [];
+          
+          movie.providers = providers;
+          movie.providersLoading = false;
+        },
+        (error) => {
+          console.error(`Error loading providers for movie ${movie.id}:`, error);
+          movie.providers = [];
+          movie.providersLoading = false;
+        }
+      );
+    });
   }
 }

@@ -177,3 +177,95 @@
 .sticky-button-spacer {
   height: 130px; /* Erhöht für besseren Abstand */
 }
+
+/* Provider Section Styles */
+.provider-section {
+  margin-top: 10px;
+  border-top: 1px solid var(--ion-color-light);
+  padding-top: 5px;
+}
+
+.provider-title {
+  font-size: 12px;
+  color: var(--ion-color-medium);
+  margin-bottom: 5px;
+  display: block;
+}
+
+.provider-logos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.provider-logo {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  object-fit: contain;
+}
+
+/* präzisere / stärker selektierte Regeln für Provider-Logos in VibeSearch */
+.results-container .provider-section,
+ion-card .provider-section {
+  .provider-logos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+
+  /* kleiner, gleichmäßiger und skalierbarer */
+  .provider-logo,
+  .provider-logos img {
+    width: 20px;
+    height: 20px;
+    max-width: 20px;
+    max-height: 20px;
+    object-fit: contain;
+    display: inline-block;
+    border-radius: 4px;
+  }
+
+}
+
+/* Fallback für Shadow-DOM / andere Scopes: etwas höhere Spezifität */
+ion-card .provider-logos img.provider-logo,
+ion-card .provider-logos img {
+  width: 20px !important;
+  height: 20px !important;
+  max-width: 20px !important;
+  max-height: 20px !important;
+  object-fit: contain !important;
+}
+
+:host {
+  --provider-logo-size: 25px; /* ca. 50% von 28px */
+}
+
+.results-container .provider-section,
+ion-card .provider-section {
+  .provider-logos {
+    gap: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .provider-logo,
+  .provider-logos img {
+    width: var(--provider-logo-size) !important;
+    height: var(--provider-logo-size) !important;
+    max-width: var(--provider-logo-size) !important;
+    max-height: var(--provider-logo-size) !important;
+    object-fit: contain;
+    display: inline-block;
+    border-radius: 4px;
+  }
+}
+
+@media (max-width: 420px) {
+  :host {
+    --provider-logo-size: 12px;
+  }
+}

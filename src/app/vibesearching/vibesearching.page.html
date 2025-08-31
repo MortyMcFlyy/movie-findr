@@ -162,6 +162,24 @@
                 <div class="rating" *ngIf="movie.vote_average">
                   <ion-badge>{{movie.vote_average | number:'1.1-1'}}</ion-badge>
                 </div>
+                
+                <!-- Provider-Section hinzufügen -->
+                <div class="provider-section" *ngIf="movie.id">
+                  <small class="provider-title">Watch on:</small>
+                  <div class="provider-logos" *ngIf="movie.providers">
+                    <img *ngFor="let provider of movie.providers"
+                        [src]="'https://image.tmdb.org/t/p/original' + provider.logo_path" 
+                        [alt]="provider.provider_name"
+                        class="provider-logo" 
+                        [title]="provider.provider_name">
+                  </div>
+                  <div *ngIf="movie.providersLoading" class="loading-providers">
+                    <ion-spinner name="dots" size="small"></ion-spinner>
+                  </div>
+                  <small *ngIf="movie.providers?.length === 0 && !movie.providersLoading">
+                    No streaming options found
+                  </small>
+                </div>
               </ion-card-content>
             </ion-card>
           </ion-col>
