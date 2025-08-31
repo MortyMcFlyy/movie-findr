@@ -4,6 +4,7 @@ import { Platform } from '@ionic/angular';
 import { LocationService } from './services/location.service';
 import { PreferencesService } from './services/preferences.service';
 import { StatusBar, Style } from '@capacitor/status-bar';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-root',
@@ -43,7 +44,7 @@ export class AppComponent implements OnInit {
     private router: Router,
     private platform: Platform,
     private location: LocationService
-  ) { }
+  ) {  }
 
   async ngOnInit() {
     // Einstellungen lesen & darkmode setzen
@@ -53,7 +54,7 @@ export class AppComponent implements OnInit {
     // Wichtig: NICHT unter die Statusleiste rendern
     await StatusBar.setOverlaysWebView({ overlay: false });
 
-    // Optional: Stil/Farbe der Statusleiste setzen
+    // Stil/Farbe der Statusleiste setzen
     await StatusBar.setStyle({ style: s.darkMode ? Style.Dark : Style.Light });
 
     // Standort-Init nach Plattform-Ready
