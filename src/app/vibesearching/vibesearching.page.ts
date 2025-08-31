@@ -265,32 +265,108 @@ export class VibesearchingPage implements OnInit {
     );
   }
 
-  loadProvidersForMovies() {
-    // Aktuelles Land für Provider (aus LocationService oder Default)
-    const countryCode = 'DE'; // Idealerweise vom LocationService
+  // Ersetze einen einzelnen Film an einem bestimmten Index
+  replaceMovie(index: number) {
+    // API-Parameter aus der vorherigen Suche wiederverwenden
+    const discoverParams: any = {
+      page: Math.floor(Math.random() * 10) + 1
+    };
 
-    this.results.forEach(movie => {
-      // Ladezustand setzen
-      movie.providersLoading = true;
-      
-      this.movieService.getProviders(movie.id).subscribe(
-        (data) => {
-          // Provider für das aktuelle Land oder Fallback auf US
-          const providers = 
-            data.results[countryCode]?.flatrate || 
-            data.results['US']?.flatrate || 
-            [];
+    // Vorherige Parameter wiederherstellen (gleiche Logik wie in reshuffleMovies)
+    if (this.selectedMood && this.moodToGenreMap[this.selectedMood]) {
+      discoverParams.with_genres = this.moodToGenreMap[this.selectedMood].join('|');
+    }
+
+    // Filmdauerparameter wiederherstellen
+    if (this.selectedDuration === 'shortfilm') {
+      discoverParams['with_runtime.lte'] = 40;
+    } else if (this.selectedDuration === 'short') {
+      discoverParams['with_runtime.gte'] = 40;
+      discoverParams['with_runtime.lte'] = 90;
+    } else if (this.selectedDuration === 'normal') {
+      discoverParams['with_runtime.gte'] = 90;
+      discoverParams['with_runtime.lte'] = 120;
+    } else if (this.selectedDuration === 'extended') {
+      discoverParams['with_runtime.gte'] = 120;
+    }
+
+    // Qualitätsfilter wiederherstellen
+    discoverParams.vote_average_gte = 7.0;
+    discoverParams.vote_count_gte = 200;
+    
+    // Zeitrahmenparameter wiederherstellen
+    const currentYear = new Date().getFullYear();
+    if (this.selectedTimeframe === 'new') {
+      const twoYearsAgo = currentYear - 2;
+      discoverParams.primary_release_date_gte = `${twoYearsAgo}-01-01`;
+    } else if (this.selectedTimeframe === 'classic') {
+      discoverParams.primary_release_date_gte = '1970-01-01';
+      discoverParams.primary_release_date_lte = '2005-12-31';
+      discoverParams.vote_average_gte = 7.0;
+      discoverParams.vote_count_gte = 500;
+      discoverParams.sort_by = 'vote_average.desc';
+    }
+
+    // API aufrufen um einen neuen Film zu holen
+    this.movieService.discoverVibesearchMovies(discoverParams).subscribe(
+      (res) => {
+        if (res.results && res.results.length > 0) {
+          // Zufälligen Film aus Ergebnissen auswählen
+          const newMovies = this.getRandomSubset(res.results.filter((m: any) => 
+            // Filter bereits angezeigte Filme heraus
+            !this.results.some(existing => existing.id === m.id) &&
+            // Filter bereits gesehene Filme heraus
+            !this.watchedIdSet.has(m.id)
+          ), 1);
           
-          movie.providers = providers;
-          movie.providersLoading = false;
-          this.loadWatchedMovies();
-        },
-        (error) => {
-          console.error(`Error loading providers for movie ${movie.id}:`, error);
-          movie.providers = [];
-          movie.providersLoading = false;
+          if (newMovies.length > 0) {
+            // Den Film an der angegebenen Stelle ersetzen
+            this.results[index] = newMovies[0];
+            
+            // Provider und Statusinformationen für den neuen Film laden
+            this.loadProviderForMovie(this.results[index]);
+            this.loadWatchedMovies();
+            this.loadFavoritesSet();
+          }
         }
-      );
+      },
+      (error) => {
+        console.error('Fehler beim Laden eines Ersatzfilms:', error);
+      }
+    );
+  }
+
+  // Helper-Methode, um nur für einen einzelnen Film Provider zu laden
+  loadProviderForMovie(movie: any) {
+    const countryCode = 'DE';
+    
+    movie.providersLoading = true;
+    
+    this.movieService.getProviders(movie.id).subscribe(
+      (data) => {
+        const providers = 
+          data.results[countryCode]?.flatrate || 
+          data.results['US']?.flatrate || 
+          [];
+        
+        movie.providers = providers;
+        movie.providersLoading = false;
+      },
+      (error) => {
+        console.error(`Error loading providers for movie ${movie.id}:`, error);
+        movie.providers = [];
+        movie.providersLoading = false;
+      }
+    );
+  }
+
+  // Neu: Methode um Provider für alle Filme zu laden
+  loadProvidersForMovies() {
+    // Load providers for all movies in the results array
+    if (!this.results || this.results.length === 0) return;
+    
+    this.results.forEach(movie => {
+      this.loadProviderForMovie(movie);
     });
   }
 
@@ -348,22 +424,40 @@ export class VibesearchingPage implements OnInit {
     }
   }
 
+  // Add the implementation of onMarkWatched
   async onMarkWatched(movie: any, event: Event) {
     event.stopPropagation();
     
     try {
-      const alreadyWatched = this.watchedIdSet.has(movie.id);
-      
-      if (alreadyWatched) {
-        // Remove from watched
-        await this.prefs.removeFromHistory(movie.id);
-      } else {
-        // Add to watched
+      // Wenn der Film noch nicht als gesehen markiert ist
+      if (!this.watchedIdSet.has(movie.id)) {
+        // Zu gesehen hinzufügen
         await this.prefs.addToHistory(movie.id);
+        
+        // Watched-Status aktualisieren
+        await this.loadWatchedMovies();
+        
+        // Fade-Animation starten
+        movie.fading = true;
+        
+        // Nach der Animation neuen Film laden
+        setTimeout(() => {
+          // Index des Films finden
+          const index = this.results.findIndex(m => m.id === movie.id);
+          if (index !== -1) {
+            // Film durch einen neuen ersetzen
+            this.replaceMovie(index);
+          }
+        }, 600); // Etwas länger als die CSS-Transition
+      } 
+      // Falls der Film bereits als gesehen markiert war und entfernt werden soll
+      else {
+        // Aus gesehen entfernen
+        await this.prefs.removeFromHistory(movie.id);
+        
+        // Watched-Status aktualisieren
+        await this.loadWatchedMovies();
       }
-      
-      // Reload watched status
-      await this.loadWatchedMovies();
     } catch (e) {
       console.error('Error updating watched status', e);
     }

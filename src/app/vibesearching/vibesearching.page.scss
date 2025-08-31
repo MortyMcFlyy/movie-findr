@@ -269,3 +269,10 @@ ion-card .provider-section {
     --provider-logo-size: 12px;
   }
 }
+
+/* Fade-Effekt für Filme, die als "gesehen" markiert wurden */
+.movie-card.fading {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+  pointer-events: none;
+}
