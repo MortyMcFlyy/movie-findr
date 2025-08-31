@@ -171,6 +171,36 @@
   .rating {
     margin-top: auto;
   }
+
+  // Neuer Container für Jahr und Bewertung
+  .movie-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 5px;
+    width: 100%;
+  }
+
+  .year {
+    font-size: 14px;
+    color: var(--ion-color-medium);
+    margin: 0;
+  }
+
+  .rating {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(var(--ion-color-primary-rgb), 0.9); // Geändert von warning zu primary (blau)
+    color: white; // Auf weiß geändert für besseren Kontrast mit blauem Hintergrund
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin: 0;
+    
+    ion-icon {
+      margin-right: 2px;
+    }
+  }
 }
 
 /* Anpassung für die sticky buttons */
@@ -240,7 +270,7 @@ ion-card .provider-logos img {
 }
 
 :host {
-  --provider-logo-size: 25px; /* ca. 50% von 28px */
+  --provider-logo-size: 25px; 
 }
 
 .results-container .provider-section,
@@ -266,7 +296,20 @@ ion-card .provider-section {
 
 @media (max-width: 420px) {
   :host {
-    --provider-logo-size: 12px;
+    --provider-logo-size: 22px; // Von 12px auf 22px erhöht für bessere Sichtbarkeit
+  }
+  
+  // Zusätzliche Verbesserungen für mobile Ansicht
+  .results-container .provider-section,
+  ion-card .provider-section {
+    .provider-logos {
+      gap: 6px; // Etwas mehr Abstand zwischen den Logos
+    }
+    
+    .provider-logo,
+    .provider-logos img {
+      border: 1px solid rgba(255, 255, 255, 0.2); // Leichter Rahmen für besseren Kontrast
+    }
   }
 }
 
@@ -275,4 +318,27 @@ ion-card .provider-section {
   opacity: 0;
   transition: opacity 0.5s ease-out;
   pointer-events: none;
+}
+
+// Neue Stile für die zentrierten Aktionsbuttons
+.action-row {
+  display: flex;
+  justify-content: center; // Horizontale Zentrierung
+  align-items: center;
+ 
+}
+
+.action-buttons {
+  display: flex;
+  gap: 70px; 
+  align-items: left;
+   margin: auto; 
+}
+
+// Machen wir die Icons etwas größer für bessere Sichtbarkeit
+.action-buttons ion-button {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  height: 40px;
+  width: 40px;
 }

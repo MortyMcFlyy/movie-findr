@@ -157,17 +157,22 @@
                    alt="{{movie.title}}"/>
               <ion-card-header>
                 <ion-card-title>{{movie.title}}</ion-card-title>
-                <ion-card-subtitle *ngIf="movie.release_date">{{movie.release_date | date:'yyyy'}}</ion-card-subtitle>
+                <!-- Das doppelte Erscheinungsjahr wird entfernt -->
+                <!-- <ion-card-subtitle *ngIf="movie.release_date">{{movie.release_date | date:'yyyy'}}</ion-card-subtitle> -->
               </ion-card-header>
               <ion-card-content>
-                <div class="rating" *ngIf="movie.vote_average">
-                  <ion-badge>{{movie.vote_average | number:'1.1-1'}}</ion-badge>
+                <!-- Neue Struktur für Jahr und Bewertung -->
+                <div class="movie-info-row">
+                  <p class="year">{{ movie.release_date | date:'yyyy' }}</p>
+                  <div class="rating" *ngIf="movie.vote_average">
+                    <ion-icon name="heart-outline"></ion-icon>
+                    <span>{{ movie.vote_average | number:'1.1-1' }}</span>
+                  </div>
                 </div>
-
+                
                 <!-- Aktion: Favorit + Schon gesehen -->
                 <div class="action-row">
-                  <div class="action-buttons" style="margin-left:auto; display:flex; gap:6px; align-items:center;">
-                  
+                  <div class="action-buttons">
                     <!-- Schon gesehen -->
                     <ion-button fill="clear" size="small" (click)="onMarkWatched(movie, $event)"
                       aria-label="Als gesehen markieren">
