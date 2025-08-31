@@ -167,12 +167,18 @@
                 <!-- Aktion: Favorit + Schon gesehen -->
                 <div class="action-row">
                   <div class="action-buttons" style="margin-left:auto; display:flex; gap:6px; align-items:center;">
-                    <!-- Schon gesehen Button -->
-                    <ion-button fill="clear" size="small" (click)="onMarkWatched(movie, $event, card)"
-                      aria-label="Als gesehen markieren" [disabled]="movie.watched">
-                      <ion-icon [name]="movie.watched ? 'checkmark-done' : 'checkmark-done-outline'" slot="icon-only" [color]="movie.watched ? 'success' : undefined"></ion-icon>
+                  
+                    <!-- Schon gesehen -->
+                    <ion-button fill="clear" size="small" (click)="onMarkWatched(movie, $event)"
+                      aria-label="Als gesehen markieren">
+                      <ng-container *ngIf="watchedIdSet.has(movie.id); else notWatched">
+                        <ion-icon name="eye" slot="icon-only" color="success"></ion-icon>
+                      </ng-container>
+                      <ng-template #notWatched>
+                        <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+                      </ng-template>
                     </ion-button>
-
+                     
                     <!-- Favorit -->
                     <ion-button fill="clear" size="small" (click)="onToggleFavorite(movie, $event)"
                       aria-label="Favorit umschalten">

@@ -26,6 +26,7 @@ export class VibesearchingPage implements OnInit {
 
   // Favoriten-Set
   favoriteIdSet: Set<number> = new Set<number>();
+  watchedIdSet: Set<number> = new Set<number>();
 
   // Mapping von Stimmungen zu Genre-IDs für die TMDB-API
   moodToGenreMap: Record<Mood, number[]> = {
@@ -47,6 +48,7 @@ export class VibesearchingPage implements OnInit {
 
   async ngOnInit() {
     await this.loadFavoritesSet();
+    await this.loadWatchedMovies();
   }
 
   selectMood(mood: Mood) {
@@ -251,6 +253,7 @@ export class VibesearchingPage implements OnInit {
           this.results = this.getRandomSubset(res.results, 6);
           this.loadProvidersForMovies(); // Provider laden
           this.loadFavoritesSet(); // Favoriten-Flags setzen
+          this.loadWatchedMovies(); // Add this line
         } else {
           this.loadFallbackResults();
         }
@@ -280,6 +283,7 @@ export class VibesearchingPage implements OnInit {
           
           movie.providers = providers;
           movie.providersLoading = false;
+          this.loadWatchedMovies();
         },
         (error) => {
           console.error(`Error loading providers for movie ${movie.id}:`, error);
@@ -298,6 +302,16 @@ export class VibesearchingPage implements OnInit {
       (this.results || []).forEach(m => m.favorite = this.favoriteIdSet.has(m.id));
     } catch (e) {
       console.warn('Could not load favorites', e);
+    }
+  }
+
+  async loadWatchedMovies() {
+    try {
+      const historyIds = await this.prefs.getHistory();
+      this.watchedIdSet = new Set(historyIds || []);
+      (this.results || []).forEach(m => m.watched = this.watchedIdSet.has(m.id));
+    } catch (e) {
+      console.warn('Could not load watched movies', e);
     }
   }
 
@@ -331,6 +345,27 @@ export class VibesearchingPage implements OnInit {
       }
     } catch (e) {
       console.error('Error toggling favorite', e);
+    }
+  }
+
+  async onMarkWatched(movie: any, event: Event) {
+    event.stopPropagation();
+    
+    try {
+      const alreadyWatched = this.watchedIdSet.has(movie.id);
+      
+      if (alreadyWatched) {
+        // Remove from watched
+        await this.prefs.removeFromHistory(movie.id);
+      } else {
+        // Add to watched
+        await this.prefs.addToHistory(movie.id);
+      }
+      
+      // Reload watched status
+      await this.loadWatchedMovies();
+    } catch (e) {
+      console.error('Error updating watched status', e);
     }
   }
 }
