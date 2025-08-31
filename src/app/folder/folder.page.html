@@ -38,10 +38,12 @@
 
 
     <!-- Dynamische Filter-Chips -->
-    <ion-chip color="tertiary" *ngIf="filterMode !== 'all'">
+    <ion-chip color="secondary" *ngIf="filterMode !== 'any'">
       <ion-label>
-        {{ filterMode === 'favorites' ? 'Nur Lieblings-Provider' : 'Keine Provider-Filter' }}
+        {{ filterMode === 'favorites' ? 'Nur Lieblings-Provider' : '' }}
+        {{ filterMode === 'all' ? 'in meiner Region verfügbar' : '' }}
       </ion-label>
+      <ion-icon name="close-circle" (click)="clearSingleFilter('provider')"></ion-icon>
     </ion-chip>
 
     <ion-chip color="secondary" *ngIf="filterState.runtime">
@@ -90,11 +92,15 @@
   </div>
 
   <!-- Leerzustand -->
-  <div class="ion-padding" *ngIf="visibleMovies.length === 0 && movies.length > 0">
-    <ion-text color="medium">
-      <p>Keine Treffer mit den aktuellen Provider-Filtern.</p>
-    </ion-text>
-  </div>
+  <!-- Hinweis, falls Modus "Favoriten" aktiv ist, aber keine Favoriten gewählt -->
+  <ion-card color="warning" *ngIf="filterMode === 'favorites' && favoriteProviders?.size === 0">
+    <ion-card-content class="ion-text-wrap">
+      Du hast noch keine Lieblings-Provider ausgewählt.
+      <ion-button fill="outline" size="small" class="ion-margin-start" (click)="goToSettings()">
+        Favoriten wählen
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
 
   <ion-grid>
     <ion-row>

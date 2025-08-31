@@ -7,7 +7,7 @@ import { FilterPopoverComponent } from './filter-popover/filter-popover.componen
 import { PreferencesService } from '../services/preferences.service';
 import { Subscription } from 'rxjs';
 import { LocationService, LocationState } from '../services/location.service';
-
+import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { IonInfiniteScroll } from '@ionic/angular/standalone';
 //https://ionicframework.com/docs/api/infinite-scroll
@@ -51,6 +51,7 @@ export class FolderPage implements OnInit {
     private prefs: PreferencesService,
     private toast: ToastController,
     private location: LocationService,
+    private router: Router,   
   ) { }
 
 
@@ -529,6 +530,12 @@ export class FolderPage implements OnInit {
       this.filterState.hideWatched = false; // statt löschen -> explizit AUS
     } else if (key === 'favoritesOnly') {
       this.filterState.favoritesOnly = false;
+    } else if (key === 'provider') {
+      this.filterMode = 'any';
+      this.requireInMyCountry = false;
+      (this.movies || []).forEach(m => this.applyProviderVisibilityForMovie(m));
+      this.rebuildVisibleMovies();
+      return;
     } else {
       delete this.filterState[key];
     }
@@ -714,7 +721,6 @@ export class FolderPage implements OnInit {
     movie._hiddenByProvider = false;
   }
 
-
   private rebuildVisibleMovies() {
     this.visibleMovies = (this.movies || []).filter(m => !m._hiddenByProvider);
   }
@@ -727,7 +733,9 @@ export class FolderPage implements OnInit {
     // Optional: Zustand via Preferences persistieren
   }
 
-
+goToSettings() {
+  this.router.navigate(['/settings']);
+}
 }
 
 
