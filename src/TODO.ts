@@ -1,11 +1,9 @@
 // TODO
 
 // Alles Hübsch machen
-//     -> Splashscreen
-//     -> App Icon --> hab ich versucht aber ist noch falsch
 //     -> App Name
 //     -> Sonstiges UI/UX
-//  Aufm Handy ist die statusleiste noch über dem Menü!!
+
 
 // Felix
 // Vibe searching algorithmus anpassen + Geolocation?
@@ -17,6 +15,10 @@
 
 
 //DONE:
+//     -> Splashscreen
+//     -> App Icon --> hab ich versucht aber ist noch falsch
+
+// Aufm Handy ist die statusleiste noch über dem Menü!!
 // Accounteinstellungen FSK rausnehmen --> Darkmode auch ?
 // info keine filme gefunden
 // Suchen mit ENTER
