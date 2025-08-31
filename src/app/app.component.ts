@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
   public categories = [
     // Spezielle Kategorien
     { name: 'Alle Filme', type: 'category', id: 'all', icon: 'film' },
-    { name: 'Beliebt', type: 'category', id: 'popular', icon: 'trending-up' },
+    // "Beliebt" Eintrag entfernt, da redundant
     { name: 'Bestbewertete', type: 'category', id: 'top-rated', icon: 'star' },
     { name: 'Aktuelle Trends', type: 'category', id: 'trending', icon: 'flame' },
 
