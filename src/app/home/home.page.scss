@@ -185,6 +185,23 @@
   }
 }
 
+// Update this style for the popularity badge
+.popularity-badge {
+  position: absolute;
+  top: 20px;
+  left: 20px;  
+  background-color: rgba(0, 0, 0, 0.2);  
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 10;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 @media (max-width: 600px) {
   .slide-container {
     min-height: 180px;

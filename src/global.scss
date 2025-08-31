@@ -36,3 +36,69 @@
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
 
+/* 
+ * Global Button Styles 
+ */
+
+/* Primary Action Button */
+.mf-button {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-primary-contrast);
+  --border-radius: var(--mf-button-border-radius);
+  --box-shadow: var(--mf-button-box-shadow);
+  --padding-start: 16px;
+  --padding-end: 16px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  text-transform: none;
+  transition: var(--mf-button-transition);
+}
+
+/* Secondary Button */
+.mf-button-secondary {
+  --background: rgba(var(--ion-color-light-rgb), 0.8);
+  --color: var(--ion-color-dark);
+  --border-radius: var(--mf-button-border-radius);
+  --box-shadow: var(--mf-button-box-shadow);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  text-transform: none;
+  transition: var(--mf-button-transition);
+}
+
+/* Icon Button */
+.mf-icon-button {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  --border-radius: 50%;
+  transition: var(--mf-button-transition);
+}
+
+/* State Styles */
+.mf-button:hover, 
+.mf-button-secondary:hover {
+  --opacity: 0.9;
+  --box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.mf-button:active,
+.mf-button-secondary:active {
+  --opacity: 1;
+  transform: translateY(1px);
+  --box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Action Row (for favorite/watched buttons) */
+.action-row {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-left: auto;
+}
+

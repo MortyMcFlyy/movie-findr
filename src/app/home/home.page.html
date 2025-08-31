@@ -19,6 +19,9 @@
       *ngIf="trendingMovies && trendingMovies.length"
       [style.backgroundImage]="'url(https://image.tmdb.org/t/p/w1280' + trendingMovies[0].backdrop_path + ')'"
     >
+      
+      <div class="popularity-badge">Aktuell Beliebt:</div>
+      
       <div class="slide-content">
         <h1>{{ trendingMovies[0].title }}</h1>
         <p>{{ trendingMovies[0].overview | slice:0:120 }}...</p>
