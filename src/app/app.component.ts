@@ -16,9 +16,9 @@ export class AppComponent implements OnInit {
 
   public appPages = [
     { title: 'Filme suchen', url: '/search', icon: 'search' },
-    { title: 'Favoriten', url: '/favorites', icon: 'star' },
     { title: 'VibeSearching', url: '/vibesearching', icon: 'film' },
-    { title: 'Verlauf', url: '/history', icon: 'time' }
+    { title: 'Favoriten', url: '/favorites', icon: 'star' },
+    { title: 'Gesehene Filme', url: '/history', icon: 'time' }
   ];
 
   // Kategorien 
