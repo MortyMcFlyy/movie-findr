@@ -1,30 +1,25 @@
 // TODO
 
-// Accounteinstellungen FSK rausnehmen --> Darkmode auch ?
-
-// Suchen mit ENTER
-
 // Alles Hübsch machen
 //     -> Splashscreen
-//     -> App Icon
+//     -> App Icon --> hab ich versucht aber ist noch falsch
 //     -> App Name
 //     -> Sonstiges UI/UX
 //  Aufm Handy ist die statusleiste noch über dem Menü!!
-// info keine filme gefunden
-
 
 // Felix
 // Vibe searching algorithmus anpassen + Geolocation?
 // --> Erscheinungsjahr passt nicht immer
 // IOS Build mit XCode
 
-
-
 // Verena
 // fuzzy search
 
 
 //DONE:
+// Accounteinstellungen FSK rausnehmen --> Darkmode auch ?
+// info keine filme gefunden
+// Suchen mit ENTER
 // lokale DB --> Zustimmung Geolocation
 // Filter für streamingprovider mit Geolocation
 // GeoLocation-Service abfragen (generate Befehl)
