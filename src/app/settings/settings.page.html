@@ -9,7 +9,7 @@
 
 <ion-content [fullscreen]="true">
   <ion-list>
-    <!-- Gruppe: Allgemein -->
+    <!-- Gruppe: Allgemein 
     <ion-item-group>
       <ion-item-divider>
         <ion-label>Allgemein</ion-label>
@@ -22,7 +22,7 @@
         </ion-toggle>
       </ion-item>
     </ion-item-group>
-
+-->
     <!-- Gruppe: Provider -->
     <ion-item-group>
       <ion-item-divider>
@@ -31,7 +31,7 @@
 
       <ion-item *ngFor="let name of favoriteProvidersList">
         <ion-label>{{ name }}</ion-label>
-        <ion-checkbox slot="end" [checked]="favoriteProviders?.has(name)"
+        <ion-checkbox slot="end" [checked]="favoriteProviders.has(name)"
           (ionChange)="toggleFavProvider(name, $event.detail.checked)">
         </ion-checkbox>
       </ion-item>
@@ -44,33 +44,83 @@
         <ion-label>Standort</ion-label>
       </ion-item-divider>
 
-      <ion-item>
-        <ion-label>
-          <h2>Status</h2>
-          <ng-container *ngIf="state$ | async as s">
-            <p>Berechtigung: <strong>{{ s.permission }}</strong></p>
-            <p>Land: <strong>{{ s.countryCode || '–' }}</strong></p>
-            <p>Zuletzt aktualisiert: {{ s.lastUpdated ? (s.lastUpdated | date:'short') : 'nie' }}</p>
-          </ng-container>
-        </ion-label>
-        <ion-button slot="end" (click)="onUpdateLocation()">Aktualisieren</ion-button>
-      </ion-item>
+      <ng-container *ngIf="(location.state$ | async) as st">
+        <!-- A) Granted -->
+        <div *ngIf="st.permission === 'granted'">
+          <ion-item lines="none">
+            <ion-label>
+              <div><strong>Berechtigung:</strong> granted</div>
+              <div><strong>Land:</strong> {{ st.countryCode || '–' }}</div>
+              <div><strong>Zuletzt aktualisiert:</strong> {{ formatTs(st.lastUpdated) }}</div>
+            </ion-label>
+            <ion-button slot="end" (click)="onUpdateLocation()">Aktualisieren</ion-button>
+          </ion-item>
+          <ion-note *ngIf="!st.countryCode" color="medium">
+            Konnte aktuell keinen Ländercode ermitteln.
+          </ion-note>
+        </div>
 
-      <ion-item *ngIf="(state$ | async)?.permission !== 'granted'">
-        <ion-label color="medium" class="ion-text-wrap">
-          Standardregion wurde auf <strong>US</strong> gesetzt, da keine Standortfreigabe erteilt wurde.
-        </ion-label>
-      </ion-item>
+        <!-- B) Prompt + Cache vorhanden -->
+        <div *ngIf="st.permission === 'prompt' && st.countryCode">
+          <ion-item lines="none">
+            <ion-label>
+              <div><strong>Berechtigung:</strong> (noch nicht erteilt)</div>
+              <div><strong>Land (aus Cache):</strong> {{ st.countryCode }}</div>
+              <div><strong>Zuletzt aktualisiert:</strong> {{ formatTs(st.lastUpdated) }}</div>
+            </ion-label>
+            <ion-button slot="end" (click)="onUpdateLocation()">Aktualisieren</ion-button>
+          </ion-item>
+          <ion-note color="medium">
+            Hinweis: Region stammt aus dem Cache und kann veraltet sein. Tippe „Aktualisieren“, um die aktuelle Region
+            zu ermitteln.
+          </ion-note>
+        </div>
 
-      <ion-item>
+        <!-- C) Prompt + kein Cache -->
+        <div *ngIf="st.permission === 'prompt' && !st.countryCode">
+          <ion-item lines="none">
+            <ion-label>
+              <div><strong>Berechtigung:</strong> (noch nicht erteilt)</div>
+              <div><strong>Land:</strong> –</div>
+              <div><strong>Zuletzt aktualisiert:</strong> nie</div>
+            </ion-label>
+            <ion-button slot="end" (click)="onUpdateLocation()">Aktualisieren</ion-button>
+          </ion-item>
+          <ion-note color="medium">
+            Tippe „Aktualisieren“ und erlaube den Standortzugriff, um deine Region zu bestimmen.
+          </ion-note>
+        </div>
+
+        <!-- D) Denied -->
+        <div *ngIf="st.permission === 'denied'">
+          <ion-item lines="none">
+            <ion-label class="ion-text-wrap">
+              <div><strong>Berechtigung:</strong> denied</div>
+              <div><strong>Land:</strong> –</div>
+              <div><strong>Zuletzt aktualisiert:</strong> nie</div>
+            </ion-label>
+            <ion-button slot="end" (click)="onUpdateLocation()">Erneut versuchen</ion-button>
+          </ion-item>
+
+          <!-- Unterschiedliche Hinweise für Android vs. Web -->
+          <ion-note *ngIf="!isWeb" color="medium">
+            Standardregion wurde auf <strong>US</strong> gesetzt, da keine Standortfreigabe erteilt wurde.
+            <br>Du kannst die Berechtigung in den App-Einstellungen verwalten.
+          </ion-note>
+
+          <ion-note *ngIf="isWeb" color="medium">
+            Standardregion wurde auf <strong>US</strong> gesetzt. Erlaube den Standort im Browser
+            (Schloss-Symbol in der Adressleiste → Website-Berechtigungen), und tippe dann „Erneut versuchen“.
+          </ion-note>
+        </div>
+      </ng-container>
+      <ion-item *ngIf="!isWeb">
         <ion-label>Berechtigung verwalten</ion-label>
         <ion-button slot="end" (click)="openAppSettings()">In App-Einstellungen</ion-button>
       </ion-item>
-
     </ion-item-group>
 
-
-    <!-- Gruppe: Filter -->
+    <!-- Gruppe: Filter
     <ion-item-group>
       <ion-item-divider>
         <ion-label>Filter</ion-label>
@@ -89,6 +139,7 @@
         </ion-select>
       </ion-item>
     </ion-item-group>
+ -->
 
     <!-- Gruppe: Über -->
     <ion-item-group>

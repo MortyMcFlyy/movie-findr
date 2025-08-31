@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, Platform } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { NativeSettings, AndroidSettings, IOSSettings } from 'capacitor-native-settings';
 import { Preferences } from '@capacitor/preferences';
@@ -17,7 +17,7 @@ import { LocationState } from '../services/location.service';
 export class SettingsPage implements OnInit {
   state$!: Observable<LocationState>;
   private prefs = inject(PreferencesService);
-  favoriteProviders = new Set<string>(); 
+  favoriteProviders = new Set<string>();
 
   favoriteProvidersList = [
     'Netflix', 'Amazon Prime Video', 'Disney+', 'Apple TV', 'WOW', 'Hulu', 'Max'
@@ -27,11 +27,15 @@ export class SettingsPage implements OnInit {
   aboutOpen = false;
 
   constructor(
-    private location: LocationService,
-    private alertController: AlertController
+    public location: LocationService,
+    private alertController: AlertController,
+    private platform: Platform
   ) { }
 
+  isWeb = !this.platform.is('hybrid');
+
   async ngOnInit() {
+    this.isWeb = this.platform.is('desktop') || this.platform.is('mobileweb');
     this.settings = await this.prefs.getSettings();
     this.applyDarkMode(this.settings.darkMode);
     this.state$ = this.location.state$; // für async pipe im Template
@@ -83,9 +87,10 @@ export class SettingsPage implements OnInit {
   }
 
   // Standort manuell aktualisieren 
-  onUpdateLocation() {
-    this.location.updateNow();
+  async onUpdateLocation() {
+    await this.location.updateNow();
   }
+
 
   // System Einstellungen öffnen
   async openAppSettings() {
@@ -109,6 +114,13 @@ export class SettingsPage implements OnInit {
     if (checked) this.favoriteProviders.add(name);
     else this.favoriteProviders.delete(name);
     await Preferences.set({ key: 'fav.providers', value: JSON.stringify([...this.favoriteProviders]) });
+  }
+
+  formatTs(ts: number | null): string {
+    if (!ts) return 'nie';
+    try {
+      return new Date(ts).toLocaleString(); // oder eigener Pipe
+    } catch { return 'nie'; }
   }
 
 }

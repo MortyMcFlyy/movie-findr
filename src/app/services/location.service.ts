@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Platform } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { Geolocation } from '@capacitor/geolocation';
 import { Preferences } from '@capacitor/preferences';
@@ -26,32 +27,41 @@ export class LocationService {
   });
   state$ = this._state$.asObservable();
 
+  constructor(private platform: Platform) { }
+
   // Bei Start: Permission checken/anfragen und Standort holen
   async initOnAppStart() {
+    if (!this.platform.is('hybrid')) {
+      // Cache verwenden
+      const cc = await this.getCachedCountryCode();
+      if (cc) {
+        this._state$.next({ ...this._state$.value, permission: 'granted', countryCode: cc });
+      } else {
+        this._state$.next({ ...this._state$.value, permission: 'prompt' });
+      }
+      return;
+    }
+
+    // Native
     await this.refreshPermissionAndMaybePrompt();
-    await this.updateIfStale(12 * 60 * 60 * 1000); // 12h Cache
+    await this.updateIfStale(12 * 60 * 60 * 1000);
   }
+
 
   // Permission prüfen/fragen + speichern (egal ob granted oder denied)
   async refreshPermissionAndMaybePrompt(): Promise<LocPermission> {
+    // Native:
     const c = await Geolocation.checkPermissions();
     let perm: LocPermission = (c.location as any) ?? 'prompt';
-
     if (perm !== 'granted') {
       const r = await Geolocation.requestPermissions();
       perm = (r.location as any) ?? 'prompt';
     }
-
-    // Persistiere den Permission-Status
     await Preferences.set({ key: KEYS.perm, value: perm });
-
-    // Bei nicht erteilter Berechtigung ALLES zurücksetzen,
     if (perm !== 'granted') {
       await this.resetPersistedLocation('denied');
       return perm;
     }
-
-    // granted: Permission im State setzen (weitere Daten kommen aus fetchAndPersist / updateIfStale)
     this._state$.next({ ...this._state$.value, permission: perm });
     return perm;
   }
@@ -59,8 +69,21 @@ export class LocationService {
 
   // Manuelles Aktualisieren
   async updateNow() {
+    if (!this.platform.is('hybrid')) {
+      try {
+        await this.fetchAndPersist(); // versucht echte Koordinaten + Country
+        await Preferences.set({ key: KEYS.perm, value: 'granted' });
+        this._state$.next({ ...this._state$.value, permission: 'granted' });
+      } catch {
+        await Preferences.set({ key: KEYS.perm, value: 'denied' });
+        await this.resetPersistedLocation('denied');
+      }
+      return;
+    }
+
+    // Native (Capacitor) 
     const perm = await this.refreshPermissionAndMaybePrompt();
-    if (perm !== 'granted') return; // gespeichert ist es trotzdem (denied)
+    if (perm !== 'granted') return;
     await this.fetchAndPersist();
   }
 
@@ -93,20 +116,35 @@ export class LocationService {
     });
   }
 
-
   private async fetchAndPersist() {
-    const pos = await Geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 10000 });
+    console.debug('[Location] fetchAndPersist() start');
+    const basic = await this.getCurrentCoords();
+    console.debug('[Location] getCurrentCoords ->', basic);
+
+    if (!basic) {
+      await this.resetPersistedLocation('error');
+      return;
+    }
+
     const coords: Coords = {
-      lat: pos.coords.latitude,
-      lng: pos.coords.longitude,
-      accuracy: pos.coords.accuracy ?? undefined,
+      lat: basic.lat,
+      lng: basic.lng,
       timestamp: Date.now()
     };
+
     const countryCode = await this.coordsToCountry(coords.lat, coords.lng);
+    console.debug('[Location] coordsToCountry ->', countryCode);
+
     await Preferences.set({ key: KEYS.coords, value: JSON.stringify(coords) });
     if (countryCode) await Preferences.set({ key: KEYS.country, value: countryCode });
     await Preferences.set({ key: KEYS.updated, value: String(Date.now()) });
-    this._state$.next({ permission: 'granted', coords, countryCode: countryCode ?? null, lastUpdated: Date.now() });
+
+    this._state$.next({
+      permission: 'granted',
+      coords,
+      countryCode: countryCode ?? null,
+      lastUpdated: Date.now()
+    });
   }
 
   async getCachedCountryCode(): Promise<string | null> {
@@ -114,16 +152,44 @@ export class LocationService {
     return (v.value as string) ?? null;
   }
 
-  // GPS --> Ländercode via Nominatim (sparsam verwenden & cachen!)
+  // GPS --> Ländercode via Nominatim 
   private async coordsToCountry(lat: number, lng: number): Promise<string | null> {
     try {
       const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1&zoom=3`;
-      // Hinweis: Öffentliche Nominatim-Policy: max ~1 req/s, eindeutiger UA/Referer, Attribution. Nutze Cache! :contentReference[oaicite:3]{index=3}
       const res = await fetch(url, { headers: { 'Accept-Language': 'de,en;q=0.9' } });
       const data = await res.json();
       return data?.address?.country_code ? String(data.address.country_code).toUpperCase() : null;
     } catch (e) {
       console.warn('reverse geocode failed', e);
+      return null;
+    }
+  }
+
+  async getCurrentCoords(): Promise<{ lat: number; lng: number } | null> {
+    console.debug('[Location] getCurrentCoords() start');
+    try {
+      if (this.platform.is('hybrid')) {
+        console.debug('[Location] getCurrentCoords() hybrid');
+        // Capacitor / Native App
+        const pos = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
+        return { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      } else {
+        console.debug('[Location] getCurrentCoords() web');
+        // Web (Browser API)
+        return new Promise((resolve, reject) => {
+          if (!navigator.geolocation) {
+            reject('Geolocation not supported in this browser.');
+            return;
+          }
+          navigator.geolocation.getCurrentPosition(
+            (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+            (err) => reject(err),
+            { enableHighAccuracy: true, timeout: 10000 }
+          );
+        });
+      }
+    } catch (e) {
+      console.error('Error getting location', e);
       return null;
     }
   }

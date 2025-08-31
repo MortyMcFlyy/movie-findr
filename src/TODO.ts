@@ -10,6 +10,7 @@
 //     -> App Name
 //     -> Sonstiges UI/UX
 //  Aufm Handy ist die statusleiste noch über dem Menü!!
+// info keine filme gefunden
 
 
 // Felix
