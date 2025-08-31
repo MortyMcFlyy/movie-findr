@@ -9,13 +9,10 @@
 
 <ion-content [fullscreen]="true" [forceOverscroll]="false">
   <ion-item>
-    <ion-input [(ngModel)]="searchTerm" placeholder="Filmname eingeben"></ion-input>
+    <ion-input [(ngModel)]="searchTerm" placeholder="Filmname eingeben" (keyup.enter)="search()">
+    </ion-input>
     <ion-button (click)="search()">Suchen</ion-button>
   </ion-item>
-
-  <div class="ion-padding" *ngIf="movies.length === 0 && !currentGenreId && !currentCategoryId">
-    <p>Suche nach Filmen, um Ergebnisse zu sehen.</p>
-  </div>
 
   <ion-item lines="none">
     <ion-label>Filter</ion-label>
@@ -92,6 +89,21 @@
   </div>
 
   <!-- Leerzustand -->
+  <!-- Hinweis: Suche starten-->
+  <div class="ion-padding" *ngIf="movies.length === 0 && !currentGenreId && !currentCategoryId && !searchExecuted">
+    <ion-text color="medium">
+      <p>Suche nach Filmen, um Ergebnisse zu sehen.</p>
+    </ion-text>
+  </div>
+
+  <!-- Hinweis: keine Treffer -->
+  <div class="ion-padding" *ngIf="searchExecuted && movies.length === 0 && searchTerm">
+    <ion-text color="medium">
+      <p>Keine Filme gefunden für "{{ searchTerm }}".</p>
+    </ion-text>
+  </div>
+
+
   <!-- Hinweis, falls Modus "Favoriten" aktiv ist, aber keine Favoriten gewählt -->
   <ion-card color="warning" *ngIf="filterMode === 'favorites' && favoriteProviders?.size === 0">
     <ion-card-content class="ion-text-wrap">

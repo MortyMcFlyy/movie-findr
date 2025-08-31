@@ -41,7 +41,7 @@ export class FolderPage implements OnInit {
   favoriteProviders = new Set<string>();
   filterMode: 'all' | 'favorites' | 'any' = 'all';
   visibleMovies: any[] = [];
-
+  searchExecuted = false;   
 
 
   private activatedRoute = inject(ActivatedRoute);
@@ -140,6 +140,7 @@ export class FolderPage implements OnInit {
 
   search() {
     if (this.searchTerm.trim() === '') return;
+    this.searchExecuted = true;
 
     // Reset genre search when performing a text search
     this.movies = [];
@@ -736,6 +737,7 @@ export class FolderPage implements OnInit {
 goToSettings() {
   this.router.navigate(['/settings']);
 }
+
 }
 
 
