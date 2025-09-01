@@ -12,6 +12,7 @@
 
 // Verena
 // fuzzy search
+// bei verlauf x einfügen um ein einzelnes zu entfernen
 
 
 //DONE:
