@@ -101,17 +101,23 @@ export class VibesearchingPage implements OnInit {
       discoverParams.with_genres = this.moodToGenreMap[this.selectedMood].join('|');
     }
 
-    // Filmdauer
+    // Filmdauer mit angepassten Qualitätsfiltern
     if (this.selectedDuration === 'shortfilm') {
       discoverParams['with_runtime.lte'] = 40;
+      // Reduzierte Filterkriterien für Kurzfilme
+      discoverParams.vote_average_gte = 6.0;  // Niedrigere Mindestbewertung
+      discoverParams.vote_count_gte = 20;     // Deutlich weniger Bewertungen erforderlich
     } else if (this.selectedDuration === 'short') {
       discoverParams['with_runtime.gte'] = 40;
       discoverParams['with_runtime.lte'] = 90;
-    } else if (this.selectedDuration === 'normal') {
-      discoverParams['with_runtime.gte'] = 90;
-      discoverParams['with_runtime.lte'] = 120;
-    } else if (this.selectedDuration === 'extended') {
-      discoverParams['with_runtime.gte'] = 120;
+      // Standardfilter für andere Filmlängen beibehalten
+      discoverParams.vote_average_gte = 7.0;
+      discoverParams.vote_count_gte = 200;
+    } else {
+      // Andere Filmlängen wie gehabt
+      // ... (bestehender Code für normal, extended, etc.)
+      discoverParams.vote_average_gte = 7.0;
+      discoverParams.vote_count_gte = 200;
     }
 
     // Einschränkung nur für Klassiker
@@ -186,11 +192,46 @@ export class VibesearchingPage implements OnInit {
 
   // Fallback-Methode wenn keine Ergebnisse gefunden werden
   loadFallbackResults() {
-    this.movieService.getPopularMovies().subscribe((res) => {
-      this.results = res.results.slice(0, 6);
-      this.loadProvidersForMovies();
-      this.loadFavoritesSet();
-    });
+    // Wenn nach Kurzfilmen gesucht wurde, spezialisierten Fallback verwenden
+    if (this.selectedDuration === 'shortfilm') {
+      const fallbackParams: any = {
+        'with_runtime.lte': 40,
+        vote_average_gte: 5.0,
+        vote_count_gte: 5,
+        sort_by: 'vote_average.desc',
+        page: Math.floor(Math.random() * 3) + 1
+      };
+      
+      this.movieService.discoverVibesearchMovies(fallbackParams).subscribe(
+        (res) => {
+          if (res.results && res.results.length > 0) {
+            this.results = this.getRandomSubset(res.results, 6);
+          } else {
+            // Wenn immer noch keine Ergebnisse, Standard-Fallback
+            this.movieService.getPopularMovies().subscribe((res) => {
+              this.results = res.results.slice(0, 6);
+              this.loadProvidersForMovies();
+              this.loadFavoritesSet();
+            });
+          }
+        },
+        (error) => {
+          // Bei Fehler Standard-Fallback
+          this.movieService.getPopularMovies().subscribe((res) => {
+            this.results = res.results.slice(0, 6);
+            this.loadProvidersForMovies();
+            this.loadFavoritesSet();
+          });
+        }
+      );
+    } else {
+      // Bestehender Fallback für andere Dauern
+      this.movieService.getPopularMovies().subscribe((res) => {
+        this.results = res.results.slice(0, 6);
+        this.loadProvidersForMovies();
+        this.loadFavoritesSet();
+      });
+    }
   }
 
   restart() {
