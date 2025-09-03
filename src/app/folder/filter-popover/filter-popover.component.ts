@@ -14,7 +14,7 @@ export class FilterPopoverComponent {
     @Input() filters: any = {};
     @Input() filterMode: 'all' | 'favorites' | 'any' = 'all';
     @Output() filterModeChange = new EventEmitter<'all' | 'favorites' | 'any'>();
-    private popoverController = inject(PopoverController);
+    public popoverController = inject(PopoverController);
 
     updateFilter(key: string, value: any) {
         this.filters[key] = value;

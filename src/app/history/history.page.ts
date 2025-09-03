@@ -92,6 +92,10 @@ export class HistoryPage implements OnInit {
     }
   }
 
+  async onRemoveFromHistory(id: number) {
+    await this.preferences.removeFromHistory(id);
+    await this.loadHistory();
+  }
 
   async onRefresh(event: CustomEvent) {
     try {

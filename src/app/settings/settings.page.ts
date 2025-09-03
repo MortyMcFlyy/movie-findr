@@ -19,7 +19,7 @@ export class SettingsPage implements OnInit {
   private prefs = inject(PreferencesService);
   private alertController = inject(AlertController);
   private platform = inject(Platform);
-  private location = inject(LocationService);
+  public location = inject(LocationService);
 
   favoriteProviders = new Set<string>();
 
@@ -68,6 +68,8 @@ export class SettingsPage implements OnInit {
     const { role } = await alert.onDidDismiss();
     if (role === 'confirm') {
       await this.prefs.clearAll();
+      await Preferences.remove({ key: 'fav.providers' });
+      this.favoriteProviders.clear();
       this.settings = await this.prefs.getSettings();  // Defaults
       this.applyDarkMode(this.settings.darkMode); // Reset dark mode
       const done = await this.alertController.create({
