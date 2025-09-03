@@ -13,12 +13,10 @@
 </ion-header>
 
 <ion-content>
-  <!-- Kein Arrow im Template: Event an Methode delegieren -->
   <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <!-- korrekter Property-Name -->
   <ion-list *ngIf="historyMovies.length; else empty">
     <ion-item *ngFor="let movie of historyMovies">
       <ion-thumbnail slot="start">

@@ -41,7 +41,7 @@ export class FolderPage implements OnInit {
   favoriteProviders = new Set<string>();
   filterMode: 'all' | 'favorites' | 'any' = 'all';
   visibleMovies: any[] = [];
-  searchExecuted = false;   
+  searchExecuted = false;
 
 
   private activatedRoute = inject(ActivatedRoute);
@@ -51,7 +51,7 @@ export class FolderPage implements OnInit {
     private prefs: PreferencesService,
     private toast: ToastController,
     private location: LocationService,
-    private router: Router,   
+    private router: Router,
   ) { }
 
 
@@ -82,7 +82,7 @@ export class FolderPage implements OnInit {
       // Set searchTerm if exists
       if (params['q']) {
         this.searchTerm = params['q'];
-        this.search(); // Optional: direkt suchen
+        this.search();
       }
     });
 
@@ -108,7 +108,7 @@ export class FolderPage implements OnInit {
       if (cc) this.providerCountry = cc;
     });
 
-    // Auf Änderungen reagieren
+    // Standortänderungen
     this.locSub = this.location.state$.subscribe((s) => {
       const newCC = s.countryCode ?? null;
 
@@ -181,7 +181,7 @@ export class FolderPage implements OnInit {
       return;
     }
 
-    // Ohne Filter – Standard-Verhalten
+    // Ohne Filter = Standard Verhalten
     switch (categoryId) {
       case 'popular':
         this.movieService.getPopularMovies(this.currentPage).subscribe((res: any) => {
@@ -311,7 +311,6 @@ export class FolderPage implements OnInit {
         if (ltes.length) options['primary_release_date.lte'] = ltes[ltes.length - 1];
       }
 
-
       // Genre in Filter übernehmen 
       if (this.currentGenreId) {
         options.with_genres = this.currentGenreId;
@@ -332,7 +331,6 @@ export class FolderPage implements OnInit {
         .subscribe(finish, onError);
       return;
     }
-
 
     // Kategorie-Paging 
     if (this.currentCategoryId) {
@@ -457,8 +455,6 @@ export class FolderPage implements OnInit {
       if (ltes.length) options['primary_release_date.lte'] = ltes[ltes.length - 1];
     }
 
-
-
     // Genre beibehalten, wenn gesetzt
     if (this.currentCategoryId) {
       switch (this.currentCategoryId) {
@@ -473,7 +469,7 @@ export class FolderPage implements OnInit {
           options['sort_by'] = 'popularity.desc';
           break;
         case 'all':
-          // Keine spezielle Sortierung TODO: zufällige sortierung?
+          // Keine spezielle Sortierung
           break;
         default:
           options.with_genres = parseInt(this.currentCategoryId); // fallback falls Kategorie ID = Genre ID
@@ -496,12 +492,12 @@ export class FolderPage implements OnInit {
   private applyLocalUserFilters(results: any[]): any[] {
     let visible = results ?? [];
 
-    // 1) Gesehene ausblenden
+    // Gesehene ausblenden
     if (this.filterState.hideWatched !== false) {
       visible = visible.filter(m => !this.watchedIdSet.has(m.id));
     }
 
-    // 2) Nur Favoriten
+    // Nur Favoriten
     if (this.filterState.favoritesOnly) {
       visible = visible.filter(m => this.favoriteIdSet.has(m.id));
     }
@@ -626,7 +622,7 @@ export class FolderPage implements OnInit {
           }
         );
       } else {
-        // Falls schon vorhanden (z. B. nach Region-Wechsel) einfach Sichtbarkeit neu prüfen
+        // Falls schon vorhanden Sichtbarkeit neu prüfen
         this.applyProviderVisibilityForMovie(movie);
       }
     });
@@ -639,7 +635,6 @@ export class FolderPage implements OnInit {
     this.watchedIdSet = new Set(historyIds);
     this.reapplyLocalFiltersIfReady();
 
-
     // Flag pro Movie für UI
     this.movies.forEach(movie => {
       movie.watched = this.watchedIdSet.has(movie.id);
@@ -650,7 +645,6 @@ export class FolderPage implements OnInit {
     this.favoriteIds = await this.prefs.getFavorites();
     this.favoriteIdSet = new Set(this.favoriteIds);
     this.reapplyLocalFiltersIfReady();
-
 
     // Flag pro Movie
     this.movies.forEach(movie => {
@@ -728,16 +722,14 @@ export class FolderPage implements OnInit {
 
   onToggleInMyCountry(val: boolean) {
     this.requireInMyCountry = val;
-    // Sichtbarkeit für alle bestehenden Filme neu anwenden
+    // Sichtbarkeit für alle Filme neu anwenden
     (this.movies || []).forEach(m => this.applyProviderVisibilityForMovie(m));
     this.rebuildVisibleMovies();
-    // Optional: Zustand via Preferences persistieren
   }
 
-goToSettings() {
-  this.router.navigate(['/settings']);
-}
-
+  goToSettings() {
+    this.router.navigate(['/settings']);
+  }
 }
 
 

@@ -27,7 +27,7 @@ export class HistoryPage implements OnInit {
     await this.loadHistory();
   }
 
-  async ionViewWillEnter() {
+  async ionViewWillEnter() { //Fired when the component routing to is about to animate into view. (https://ionicframework.com/docs/angular/lifecycle)
     await this.loadHistory();
   }
 

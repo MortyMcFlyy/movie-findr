@@ -7,9 +7,6 @@ import { RouterModule } from '@angular/router';
 import { Geolocation } from '@capacitor/geolocation';
 
 
-
-
-
 interface MovieNews {
   id: number;
   title: string;
@@ -24,7 +21,7 @@ interface MovieNews {
   styleUrls: ['./home.page.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, RouterModule],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA] // Add this schema
+  schemas: [CUSTOM_ELEMENTS_SCHEMA] 
 })
 export class HomePage implements OnInit {
   trendingMovies: any[] = [];
@@ -63,8 +60,6 @@ export class HomePage implements OnInit {
   }
 
   navigateToMovie(id: number) {
-    // In echter App würdest du zur Detailseite navigieren
-    // Hier simulieren wir es mit einem Umweg über den Folder
     this.router.navigate(['/folder', 'Inbox'], {
       queryParams: { movie: id }
     });
@@ -74,11 +69,9 @@ export class HomePage implements OnInit {
     this.router.navigate(['/folder/Inbox'], { queryParams: { q: title } });
   }
 
-
-
   async testLocation() {
     try {
-      // 1) Check & request permission
+      // Check/Request permission
       const status = await Geolocation.checkPermissions();
       if (status.location !== 'granted') {
         const req = await Geolocation.requestPermissions();
@@ -88,7 +81,7 @@ export class HomePage implements OnInit {
         }
       }
 
-      // 2) Position holen (mit Timeout & High Accuracy)
+      // Geolocation holen 
       const pos = await Geolocation.getCurrentPosition({
         enableHighAccuracy: true,
         timeout: 10000

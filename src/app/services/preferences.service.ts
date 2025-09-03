@@ -47,10 +47,8 @@ export class PreferencesService {
     let next: number[];
 
     if (favs.includes(id)) {
-      // Wenn ID schon in der Liste ist → entferne sie
       next = favs.filter(x => x !== id);
     } else {
-      // Wenn ID nicht drin ist → füge sie vorne hinzu
       next = [id, ...favs];
     }
 

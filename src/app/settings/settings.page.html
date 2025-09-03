@@ -9,20 +9,6 @@
 
 <ion-content [fullscreen]="true">
   <ion-list>
-    <!-- Gruppe: Allgemein 
-    <ion-item-group>
-      <ion-item-divider>
-        <ion-label>Allgemein</ion-label>
-      </ion-item-divider>
-
-      <ion-item>
-        <ion-icon name="moon-outline" slot="start"></ion-icon>
-        <ion-label>Dark Mode</ion-label>
-        <ion-toggle [checked]="settings.darkMode" (ionChange)="onToggleDarkMode($event.detail.checked)">
-        </ion-toggle>
-      </ion-item>
-    </ion-item-group>
--->
     <!-- Gruppe: Provider -->
     <ion-item-group>
       <ion-item-divider>
@@ -37,7 +23,6 @@
       </ion-item>
     </ion-item-group>
 
-
     <!-- Gruppe: Standort -->
     <ion-item-group>
       <ion-item-divider>
@@ -45,7 +30,7 @@
       </ion-item-divider>
 
       <ng-container *ngIf="(location.state$ | async) as st">
-        <!-- A) Granted -->
+        <!-- if Granted -->
         <div *ngIf="st.permission === 'granted'">
           <ion-item lines="none">
             <ion-label>
@@ -60,7 +45,7 @@
           </ion-note>
         </div>
 
-        <!-- B) Prompt + Cache vorhanden -->
+        <!-- Prompt + Cache vorhanden -->
         <div *ngIf="st.permission === 'prompt' && st.countryCode">
           <ion-item lines="none">
             <ion-label>
@@ -76,7 +61,7 @@
           </ion-note>
         </div>
 
-        <!-- C) Prompt + kein Cache -->
+        <!-- Prompt + kein Cache -->
         <div *ngIf="st.permission === 'prompt' && !st.countryCode">
           <ion-item lines="none">
             <ion-label>
@@ -91,7 +76,7 @@
           </ion-note>
         </div>
 
-        <!-- D) Denied -->
+        <!-- if Denied -->
         <div *ngIf="st.permission === 'denied'">
           <ion-item lines="none">
             <ion-label class="ion-text-wrap">
@@ -120,27 +105,6 @@
       </ion-item>
     </ion-item-group>
 
-    <!-- Gruppe: Filter
-    <ion-item-group>
-      <ion-item-divider>
-        <ion-label>Filter</ion-label>
-      </ion-item-divider>
-
-      <ion-item>
-        <ion-icon name="eye-off-outline" slot="start"></ion-icon>
-        <ion-label>Jugendschutz</ion-label>
-        <ion-select [value]="settings.fskLevel" interface="action-sheet" placeholder="Wähle FSK-Level"
-          (ionChange)="onChangeFsk($event.detail.value)">
-          <ion-select-option value="0">Alle anzeigen</ion-select-option>
-          <ion-select-option value="6">FSK 6</ion-select-option>
-          <ion-select-option value="12">FSK 12</ion-select-option>
-          <ion-select-option value="16">FSK 16</ion-select-option>
-          <ion-select-option value="18">FSK 18</ion-select-option>
-        </ion-select>
-      </ion-item>
-    </ion-item-group>
- -->
-
     <!-- Gruppe: Über -->
     <ion-item-group>
       <ion-item-divider>
@@ -153,7 +117,7 @@
         <ion-label>Über MovieFindr</ion-label>
       </ion-item>
 
-      <!-- Das Modal -->
+      <!-- Modal -->
       <ion-modal [isOpen]="aboutOpen" (didDismiss)="aboutOpen = false">
         <ng-template>
           <ion-header>

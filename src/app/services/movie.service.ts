@@ -90,12 +90,11 @@ export class MovieService {
     // Parameter für die TMDB API anpassen
     const params: any = { api_key: this.apiKey };
     
-    // Basis-Parameter
     if (options.with_genres) params.with_genres = options.with_genres;
     if (options.sort_by) params.sort_by = options.sort_by;
     if (options.page) params.page = options.page;
     
-    // Bewertungsparameter - korrekte Namen mit Punkten verwenden!
+    // Bewertungsparameter
     if (options.vote_average_gte) params['vote_average.gte'] = options.vote_average_gte;
     if (options.vote_average_lte) params['vote_average.lte'] = options.vote_average_lte;
     if (options.vote_count_gte) params['vote_count.gte'] = options.vote_count_gte;
@@ -118,7 +117,7 @@ export class MovieService {
       include_adult: false  // NSFW-Filme ausschließen
     };
 
-    // Nur gültige Parameter einfügen
+    // Parameter Whitelist
     const validParams = [
       'with_genres',
       'sort_by',
@@ -142,7 +141,6 @@ export class MovieService {
 
     return this.http.get(`${this.baseUrl}/discover/movie`, { params });
   }
-
 
   //Provider
   getProviders(movieId: number): Observable<any> {
@@ -194,7 +192,7 @@ export class MovieService {
     });
   }
 
-  // Multi-Search (Filme, Serien, Personen)
+  // Multi-Search
   multiSearch(query: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/search/multi`, {
       params: {

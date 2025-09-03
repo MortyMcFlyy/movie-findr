@@ -40,7 +40,6 @@ export class SettingsPage implements OnInit {
     this.applyDarkMode(this.settings.darkMode);
     this.state$ = this.location.state$; // für async pipe im Template
     await this.loadFavProviders();
-
   }
 
   async onToggleDarkMode(enabled: boolean) {
@@ -91,7 +90,6 @@ export class SettingsPage implements OnInit {
     await this.location.updateNow();
   }
 
-
   // System Einstellungen öffnen
   async openAppSettings() {
     try {
@@ -119,7 +117,7 @@ export class SettingsPage implements OnInit {
   formatTs(ts: number | null): string {
     if (!ts) return 'nie';
     try {
-      return new Date(ts).toLocaleString(); // oder eigener Pipe
+      return new Date(ts).toLocaleString();
     } catch { return 'nie'; }
   }
 

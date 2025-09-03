@@ -26,22 +26,21 @@ export class LazyLoadProvidersDirective implements OnInit, OnDestroy {
 
   private setupIntersectionObserver() {
     const options = {
-      root: null, // Use the viewport as root
+      root: null, 
       rootMargin: '0px',
-      threshold: 0.1 // Trigger when at least 10% of the element is visible
+      threshold: 0.1 
     };
 
     this.observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           this.loadProviders();
-          // Once loaded, no need to observe anymore
           this.observer.unobserve(entry.target);
         }
       });
     }, options);
 
-    // Start observing the element
+    // Start observing
     this.observer.observe(this.el.nativeElement);
   }
 
@@ -54,7 +53,6 @@ export class LazyLoadProvidersDirective implements OnInit, OnDestroy {
       this.movieService.getProviders(this.movie.id).subscribe(
         response => {
           const results = response.results || {};
-          // First try US providers, then fallback to first available country
           const countryData = results['US'] || results[Object.keys(results)[0]];
           
           if (countryData && countryData.flatrate) {

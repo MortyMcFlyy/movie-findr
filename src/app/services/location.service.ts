@@ -47,7 +47,6 @@ export class LocationService {
     await this.updateIfStale(12 * 60 * 60 * 1000);
   }
 
-
   // Permission prüfen/fragen + speichern (egal ob granted oder denied)
   async refreshPermissionAndMaybePrompt(): Promise<LocPermission> {
     // Native:
@@ -67,11 +66,11 @@ export class LocationService {
   }
 
 
-  // Manuelles Aktualisieren
+  // Manuell Aktualisieren
   async updateNow() {
     if (!this.platform.is('hybrid')) {
       try {
-        await this.fetchAndPersist(); // versucht echte Koordinaten + Country
+        await this.fetchAndPersist(); // echte Koordinaten + Country
         await Preferences.set({ key: KEYS.perm, value: 'granted' });
         this._state$.next({ ...this._state$.value, permission: 'granted' });
       } catch {
@@ -175,7 +174,7 @@ export class LocationService {
         return { lat: pos.coords.latitude, lng: pos.coords.longitude };
       } else {
         console.debug('[Location] getCurrentCoords() web');
-        // Web (Browser API)
+        // Web 
         return new Promise((resolve, reject) => {
           if (!navigator.geolocation) {
             reject('Geolocation not supported in this browser.');

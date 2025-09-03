@@ -23,7 +23,7 @@ export class FilterPopoverComponent {
 
     updateFilterMode(val: 'all' | 'favorites' | 'any') {
         this.filterMode = val;
-        this.filterModeChange.emit(val); 
+        this.filterModeChange.emit(val);
     }
 
     resetAllFilters() {
@@ -32,7 +32,6 @@ export class FilterPopoverComponent {
         }
         this.popoverController.dismiss();
     }
-
 
     clearSingleFilter(key: string) {
         delete this.filters[key];

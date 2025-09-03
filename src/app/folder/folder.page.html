@@ -33,7 +33,6 @@
       <ion-label>Region: {{ providerCountry }}</ion-label>
     </ion-chip>
 
-
     <!-- Dynamische Filter-Chips -->
     <ion-chip color="secondary" *ngIf="filterMode !== 'any'">
       <ion-label>
@@ -83,9 +82,6 @@
       <ion-label>Alle Filter entfernen</ion-label>
     </ion-chip>
 
-
-
-
   </div>
 
   <!-- Leerzustand -->
@@ -102,7 +98,6 @@
       <p>Keine Filme gefunden für "{{ searchTerm }}".</p>
     </ion-text>
   </div>
-
 
   <!-- Hinweis, falls Modus "Favoriten" aktiv ist, aber keine Favoriten gewählt -->
   <ion-card color="warning" *ngIf="filterMode === 'favorites' && favoriteProviders?.size === 0">

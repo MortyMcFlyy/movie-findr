@@ -26,7 +26,6 @@ export class AppComponent implements OnInit {
   public categories = [
     // Spezielle Kategorien
     { name: 'Alle Filme', type: 'category', id: 'all', icon: 'film' },
-    // "Beliebt" Eintrag entfernt, da redundant
     { name: 'Bestbewertete', type: 'category', id: 'top-rated', icon: 'star' },
     { name: 'Aktuelle Trends', type: 'category', id: 'trending', icon: 'flame' },
 
@@ -51,7 +50,7 @@ export class AppComponent implements OnInit {
     const s = await this.prefs.getSettings();
     document.body.classList.toggle('dark', s.darkMode);
 
-    // Wichtig: NICHT unter die Statusleiste rendern
+    // NICHT unter die Statusleiste rendern
     await StatusBar.setOverlaysWebView({ overlay: false });
 
     // Stil/Farbe der Statusleiste setzen
@@ -64,7 +63,6 @@ export class AppComponent implements OnInit {
   // Navigation based on category type
   searchByCategory(category: any) {
     if (category.type === 'genre') {
-      // Für Genres wie bisher
       this.router.navigate(['/search'], {
         queryParams: {
           genre: category.id,
@@ -72,7 +70,6 @@ export class AppComponent implements OnInit {
         }
       });
     } else {
-      // Für spezielle Kategorien
       this.router.navigate(['/search'], {
         queryParams: {
           category: category.id,
@@ -82,9 +79,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-  // Fügen Sie diese Methode zur AppComponent-Klasse hinzu
   isActiveCategoryOrGenre(category: any): boolean {
-    // URL-Parameter auslesen
     const queryParams = new URLSearchParams(window.location.search);
     
     if (category.type === 'genre') {

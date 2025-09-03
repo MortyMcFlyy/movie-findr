@@ -27,7 +27,7 @@ export class FavoritesPage implements OnInit {
     await this.loadFavorites();
   }
 
-  async ionViewWillEnter() {
+  async ionViewWillEnter() { //Fired when the component routing to is about to animate into view. (https://ionicframework.com/docs/angular/lifecycle)
     // Beim Zurückkehren aktualisieren, falls sich Favoriten geändert haben
     await this.loadFavorites();
   }

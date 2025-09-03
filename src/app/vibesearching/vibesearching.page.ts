@@ -3,7 +3,7 @@ import { MovieService } from '../services/movie.service';
 import { AnimationController } from '@ionic/angular';
 import { PreferencesService } from '../services/preferences.service'; // <-- neu
 
-// Definieren Sie einen Typ für die erlaubten Stimmungen
+// Type für die Stimmungen
 type Mood = 'happy' | 'relaxed' | 'thrilling' | 'horror' | 'love' | 'music' | 'documentary' | 'action';
 
 @Component({
@@ -15,8 +15,6 @@ type Mood = 'happy' | 'relaxed' | 'thrilling' | 'horror' | 'love' | 'music' | 'd
 export class VibesearchingPage implements OnInit {
   currentStep = 1;
   selectedMood: Mood | null = null;
-  // Alten Typ ersetzen
-  // selectedDuration: 'short' | 'medium' | 'long' | null = null;
 
   // Neuer filmspezifischer Typ
   selectedDuration: 'shortfilm' | 'short' | 'normal' | 'extended' | 'any' | null = null;
@@ -28,7 +26,7 @@ export class VibesearchingPage implements OnInit {
   favoriteIdSet: Set<number> = new Set<number>();
   watchedIdSet: Set<number> = new Set<number>();
 
-  // Mapping von Stimmungen zu Genre-IDs für die TMDB-API
+  // Mapping von Stimmungen zu Genre-IDs für TMDB
   moodToGenreMap: Record<Mood, number[]> = {
     happy: [35, 10751, 16],
     relaxed: [18, 10749, 14],
@@ -43,7 +41,7 @@ export class VibesearchingPage implements OnInit {
   constructor(
     private movieService: MovieService,
     private animationCtrl: AnimationController,
-    private prefs: PreferencesService // <-- injizieren
+    private prefs: PreferencesService 
   ) {}
 
   async ngOnInit() {
@@ -57,7 +55,7 @@ export class VibesearchingPage implements OnInit {
     this.selectedMood = mood;
     this.isAnimating = true;
     
-    // Animation starten und nach Abschluss zum nächsten Schritt wechseln
+    // Animation starten
     setTimeout(() => {
       this.currentStep = 2;
       this.isAnimating = false;
@@ -70,7 +68,7 @@ export class VibesearchingPage implements OnInit {
     this.selectedDuration = duration;
     this.isAnimating = true;
     
-    // Animation starten und nach Abschluss zum nächsten Schritt wechseln
+    // Animation starten
     setTimeout(() => {
       this.currentStep = 3;
       this.isAnimating = false;
@@ -83,7 +81,7 @@ export class VibesearchingPage implements OnInit {
     this.selectedTimeframe = timeframe;
     this.isAnimating = true;
     
-    // Einfache Animation und dann Ergebnisse laden
+    // Einfache Animation
     setTimeout(() => {
       this.findMoviesByVibes();
       this.currentStep = 4;
@@ -114,8 +112,7 @@ export class VibesearchingPage implements OnInit {
       discoverParams.vote_average_gte = 7.0;
       discoverParams.vote_count_gte = 200;
     } else {
-      // Andere Filmlängen wie gehabt
-      // ... (bestehender Code für normal, extended, etc.)
+      // Andere Filmlängen
       discoverParams.vote_average_gte = 7.0;
       discoverParams.vote_count_gte = 200;
     }
@@ -132,7 +129,6 @@ export class VibesearchingPage implements OnInit {
       const twoYearsAgo = currentYear - 2;
       discoverParams.primary_release_date_gte = `${twoYearsAgo}-01-01`;
     }
-    // Bei 'any' setzen wir keine Laufzeitbeschränkung
 
     // Bewertungsbeschränkungen optimieren für relevantere Ergebnisse
     discoverParams.vote_average_gte = 7.0;  // Mindestens 7.0/10
@@ -154,14 +150,13 @@ export class VibesearchingPage implements OnInit {
       discoverParams.sort_by = 'popularity.desc';
     }
 
-    // 3. Zeitrahmenparameter hinzufügen (unverändert)
+    // Zeitrahmenparameter  
     const currentYear = new Date().getFullYear();
     if (this.selectedTimeframe === 'new') {
       // Filme der letzten 2 Jahre
       const twoYearsAgo = currentYear - 2;
       discoverParams.primary_release_date_gte = `${twoYearsAgo}-01-01`;
     }
-    
 
     console.log('API-Parameter:', discoverParams);
     
@@ -285,7 +280,6 @@ export class VibesearchingPage implements OnInit {
       discoverParams.vote_count_gte = 500;
       discoverParams.sort_by = 'vote_average.desc';
     }
-
     
     // API erneut aufrufen
     this.movieService.discoverVibesearchMovies(discoverParams).subscribe(
@@ -401,7 +395,7 @@ export class VibesearchingPage implements OnInit {
     );
   }
 
-  // Neu: Methode um Provider für alle Filme zu laden
+  // Methode um Provider für alle Filme zu laden
   loadProvidersForMovies() {
     // Load providers for all movies in the results array
     if (!this.results || this.results.length === 0) return;
@@ -489,7 +483,7 @@ export class VibesearchingPage implements OnInit {
             // Film durch einen neuen ersetzen
             this.replaceMovie(index);
           }
-        }, 600); // Etwas länger als die CSS-Transition
+        }, 600);
       } 
       // Falls der Film bereits als gesehen markiert war und entfernt werden soll
       else {
