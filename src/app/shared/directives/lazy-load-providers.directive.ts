@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
+import { Directive, ElementRef, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { MovieService } from '../../services/movie.service';
 
 @Directive({
@@ -9,10 +9,8 @@ export class LazyLoadProvidersDirective implements OnInit, OnDestroy {
   @Input() movie: any;
   private observer !: IntersectionObserver;
 
-  constructor(
-    private el: ElementRef,
-    private movieService: MovieService
-  ) {}
+  private readonly el = inject(ElementRef);
+  private readonly movieService = inject(MovieService);
 
   ngOnInit() {
     this.setupIntersectionObserver();

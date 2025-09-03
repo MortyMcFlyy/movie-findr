@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { Geolocation } from '@capacitor/geolocation';
@@ -22,12 +22,12 @@ const KEYS = {
 
 @Injectable({ providedIn: 'root' })
 export class LocationService {
+  private platform = inject(Platform);
+
   private _state$ = new BehaviorSubject<LocationState>({
     permission: 'prompt', coords: null, countryCode: null, lastUpdated: null
   });
   state$ = this._state$.asObservable();
-
-  constructor(private platform: Platform) { }
 
   // Bei Start: Permission checken/anfragen und Standort holen
   async initOnAppStart() {

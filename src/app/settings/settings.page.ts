@@ -17,6 +17,10 @@ import { LocationState } from '../services/location.service';
 export class SettingsPage implements OnInit {
   state$!: Observable<LocationState>;
   private prefs = inject(PreferencesService);
+  private alertController = inject(AlertController);
+  private platform = inject(Platform);
+  private location = inject(LocationService);
+
   favoriteProviders = new Set<string>();
 
   favoriteProvidersList = [
@@ -25,12 +29,6 @@ export class SettingsPage implements OnInit {
 
   settings: Settings = { darkMode: false, fskLevel: '0' };
   aboutOpen = false;
-
-  constructor(
-    public location: LocationService,
-    private alertController: AlertController,
-    private platform: Platform
-  ) { }
 
   isWeb = !this.platform.is('hybrid');
 

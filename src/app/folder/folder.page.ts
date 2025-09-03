@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MovieService } from '../services/movie.service';
 import { PopoverController } from '@ionic/angular';
@@ -6,9 +6,8 @@ import { Preferences } from '@capacitor/preferences';
 import { FilterPopoverComponent } from './filter-popover/filter-popover.component';
 import { PreferencesService } from '../services/preferences.service';
 import { Subscription } from 'rxjs';
-import { LocationService, LocationState } from '../services/location.service';
+import { LocationService } from '../services/location.service';
 import { Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
 import { IonInfiniteScroll } from '@ionic/angular/standalone';
 //https://ionicframework.com/docs/api/infinite-scroll
 
@@ -18,8 +17,15 @@ import { IonInfiniteScroll } from '@ionic/angular/standalone';
   styleUrls: ['./folder.page.scss'],
   standalone: false,
 })
-export class FolderPage implements OnInit {
+export class FolderPage implements OnInit, OnDestroy {
   @ViewChild(IonInfiniteScroll) infiniteScroll!: IonInfiniteScroll;
+
+  private activatedRoute = inject(ActivatedRoute);
+  private movieService = inject(MovieService);
+  private popoverController = inject(PopoverController);
+  private prefs = inject(PreferencesService);
+  private location = inject(LocationService);
+  private router = inject(Router);
 
   public folder!: string;
   searchTerm: string = '';
@@ -42,18 +48,6 @@ export class FolderPage implements OnInit {
   filterMode: 'all' | 'favorites' | 'any' = 'all';
   visibleMovies: any[] = [];
   searchExecuted = false;
-
-
-  private activatedRoute = inject(ActivatedRoute);
-  constructor(
-    private movieService: MovieService,
-    private popoverController: PopoverController,
-    private prefs: PreferencesService,
-    private toast: ToastController,
-    private location: LocationService,
-    private router: Router,
-  ) { }
-
 
   async ngOnInit() {
     this.folder = this.activatedRoute.snapshot.paramMap.get('id') as string;

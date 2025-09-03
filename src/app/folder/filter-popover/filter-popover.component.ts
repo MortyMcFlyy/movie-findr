@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { PopoverController, IonicModule } from '@ionic/angular';
 
 @Component({
@@ -14,8 +14,7 @@ export class FilterPopoverComponent {
     @Input() filters: any = {};
     @Input() filterMode: 'all' | 'favorites' | 'any' = 'all';
     @Output() filterModeChange = new EventEmitter<'all' | 'favorites' | 'any'>();
-
-    constructor(public popoverController: PopoverController) { }
+    private popoverController = inject(PopoverController);
 
     updateFilter(key: string, value: any) {
         this.filters[key] = value;

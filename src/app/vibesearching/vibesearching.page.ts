@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MovieService } from '../services/movie.service';
-import { AnimationController } from '@ionic/angular';
-import { PreferencesService } from '../services/preferences.service'; // <-- neu
+import { PreferencesService } from '../services/preferences.service';
 
 // Type für die Stimmungen
 type Mood = 'happy' | 'relaxed' | 'thrilling' | 'horror' | 'love' | 'music' | 'documentary' | 'action';
@@ -13,6 +12,9 @@ type Mood = 'happy' | 'relaxed' | 'thrilling' | 'horror' | 'love' | 'music' | 'd
   standalone: false,
 })
 export class VibesearchingPage implements OnInit {
+  private movieService = inject(MovieService);
+  private prefs = inject(PreferencesService);
+
   currentStep = 1;
   selectedMood: Mood | null = null;
 
@@ -37,12 +39,6 @@ export class VibesearchingPage implements OnInit {
     documentary: [99],
     action: [28]
   };
-
-  constructor(
-    private movieService: MovieService,
-    private animationCtrl: AnimationController,
-    private prefs: PreferencesService 
-  ) {}
 
   async ngOnInit() {
     await this.loadFavoritesSet();

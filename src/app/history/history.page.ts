@@ -16,12 +16,11 @@ type MovieCard = { id: number; title?: string; poster_path?: string; vote_averag
 export class HistoryPage implements OnInit {
   private preferences = inject(PreferencesService);
   private movieService = inject(MovieService);
+  private alertController = inject(AlertController);
 
   historyIds: number[] = [];
   historyMovies: MovieCard[] = [];
   loading = false;
-
-  constructor(private alertController: AlertController) { }
 
   async ngOnInit() {
     await this.loadHistory();

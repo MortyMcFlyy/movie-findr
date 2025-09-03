@@ -4,7 +4,6 @@ import { Platform } from '@ionic/angular';
 import { LocationService } from './services/location.service';
 import { PreferencesService } from './services/preferences.service';
 import { StatusBar, Style } from '@capacitor/status-bar';
-import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +13,9 @@ import { Capacitor } from '@capacitor/core';
 })
 export class AppComponent implements OnInit {
   private prefs = inject(PreferencesService);
+  private router = inject(Router);
+  private platform = inject(Platform);
+  private location = inject(LocationService);
 
   public appPages = [
     { title: 'Filme suchen', url: '/search', icon: 'search' },
@@ -37,13 +39,6 @@ export class AppComponent implements OnInit {
     { name: 'Horror', type: 'genre', id: 27, icon: 'skull' },
     { name: 'Animation', type: 'genre', id: 16, icon: 'color-wand' }
   ];
-
-
-  constructor(
-    private router: Router,
-    private platform: Platform,
-    private location: LocationService
-  ) {  }
 
   async ngOnInit() {
     // Einstellungen lesen & darkmode setzen

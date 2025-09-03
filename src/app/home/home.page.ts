@@ -1,4 +1,4 @@
-import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
 import { MovieService } from '../services/movie.service';
 import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
@@ -24,6 +24,9 @@ interface MovieNews {
   schemas: [CUSTOM_ELEMENTS_SCHEMA] 
 })
 export class HomePage implements OnInit {
+  private movieService = inject(MovieService);
+  private router = inject(Router);
+
   trendingMovies: any[] = [];
   recentlyViewed: any[] = [];
   movieNews: MovieNews[] = [];
@@ -38,11 +41,6 @@ export class HomePage implements OnInit {
     },
     loop: true
   };
-
-  constructor(
-    private movieService: MovieService,
-    private router: Router
-  ) { }
 
   ngOnInit() {
     this.loadTrendingMovies();
