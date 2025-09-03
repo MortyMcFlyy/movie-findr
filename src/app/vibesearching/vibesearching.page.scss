@@ -15,7 +15,7 @@
 .button-container {
   display: flex;
   flex-direction: column;
-  gap: 18px;  /* Erhöhter Abstand zwischen Buttons */
+  gap: 18px;  
   margin: 20px auto;
   max-width: 450px;
   width: 90%;
@@ -30,7 +30,7 @@
   --padding-start: 16px;
   --padding-end: 16px;
   
-  height: 65px;  /* Mehr Höhe */
+  height: 65px;  
   margin: 0;
   overflow: visible;
   
@@ -60,22 +60,22 @@
   display: flex;
   align-items: center;
   width: 100%;
-  gap: 15px;  /* Mehr Abstand zwischen Icon und Text */
+  gap: 15px;  
   justify-content: flex-start;
 }
 
 .vibe-button ion-icon {
-  font-size: 1.4rem;  /* Größeres Icon */
+  font-size: 1.4rem;  
   color: var(--ion-color-primary);
 }
 
 .vibe-button span {
-  font-size: 1rem;  /* Etwas größerer Text */
+  font-size: 1rem;  
   font-weight: 500;
   color: var(--ion-color-dark);
   letter-spacing: 0.3px;
-  text-transform: none; /* Entfernt Großbuchstaben */
-  padding-left: 5px;  /* Zusätzlicher Abstand links vom Text */
+  text-transform: none; 
+  padding-left: 5px;  
 }
 
 /* Status-Styles */
@@ -112,7 +112,7 @@
 /* Responsive Design für kleinere Bildschirme */
 @media (max-width: 400px) {
   .vibe-button {
-    height: 60px;  /* Etwas kleiner auf mobilen Geräten, aber immer noch gut klickbar */
+    height: 60px;  
   }
   
   .vibe-button span {
@@ -123,7 +123,7 @@
 /* Styling für die Movie Cards im Ergebnisbereich */
 .results-container {
   .movie-card {
-    height: 520px; /* Feste Höhe für alle Karten */
+    height: 520px; 
     display: flex;
     flex-direction: column;
     margin: 0 auto;
@@ -134,12 +134,12 @@
 
   ion-card-header {
     padding-bottom: 8px;
-    height: 100px; /* Erhöht von 85px auf 100px */
+    height: 100px; 
     overflow: hidden;
   }
 
   ion-card-title {
-    font-size: 20px; /* Etwas kleinere Schrift */
+    font-size: 20px; 
     line-height: 1.3;
     
     /* WebKit/Blink (Chrome, Safari, Opera) */
@@ -190,8 +190,8 @@
   .rating {
     display: inline-flex;
     align-items: center;
-    background: rgba(var(--ion-color-primary-rgb), 0.9); // Geändert von warning zu primary (blau)
-    color: white; // Auf weiß geändert für besseren Kontrast mit blauem Hintergrund
+    background: rgba(var(--ion-color-primary-rgb), 0.9); 
+    color: white; 
     font-size: 12px;
     padding: 2px 6px;
     border-radius: 4px;
@@ -205,10 +205,10 @@
 
 /* Anpassung für die sticky buttons */
 .sticky-button-spacer {
-  height: 130px; /* Erhöht für besseren Abstand */
+  height: 130px; 
 }
 
-/* Provider Section Styles */
+
 .provider-section {
   margin-top: 10px;
   border-top: 1px solid var(--ion-color-light);
@@ -235,7 +235,7 @@
   object-fit: contain;
 }
 
-/* präzisere / stärker selektierte Regeln für Provider-Logos in VibeSearch */
+
 .results-container .provider-section,
 ion-card .provider-section {
   .provider-logos {
@@ -245,7 +245,7 @@ ion-card .provider-section {
     align-items: center;
   }
 
-  /* kleiner, gleichmäßiger und skalierbarer */
+  
   .provider-logo,
   .provider-logos img {
     width: 25px;
@@ -259,7 +259,7 @@ ion-card .provider-section {
 
 }
 
-/* Fallback für Shadow-DOM / andere Scopes: etwas höhere Spezifität */
+/* Fallback */
 ion-card .provider-logos img.provider-logo,
 ion-card .provider-logos img {
   width: 20px !important;
@@ -296,14 +296,14 @@ ion-card .provider-section {
 
 @media (max-width: 420px) {
   :host {
-    --provider-logo-size: 22px; // Von 12px auf 22px erhöht für bessere Sichtbarkeit
+    --provider-logo-size: 22px; 
   }
   
   // Zusätzliche Verbesserungen für mobile Ansicht
   .results-container .provider-section,
   ion-card .provider-section {
     .provider-logos {
-      gap: 6px; // Etwas mehr Abstand zwischen den Logos
+      gap: 6px; //bissl mehr Abstand zwischen den Logos
     }
     
     .provider-logo,
@@ -320,10 +320,10 @@ ion-card .provider-section {
   pointer-events: none;
 }
 
-// Neue Stile für die zentrierten Aktionsbuttons
+
 .action-row {
   display: flex;
-  justify-content: center; // Horizontale Zentrierung
+  justify-content: center; 
   align-items: center;
  
 }
@@ -335,7 +335,7 @@ ion-card .provider-section {
    margin: auto; 
 }
 
-// Machen wir die Icons etwas größer für bessere Sichtbarkeit
+
 .action-buttons ion-button {
   --padding-start: 8px;
   --padding-end: 8px;

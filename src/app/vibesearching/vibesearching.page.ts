@@ -90,17 +90,18 @@ export class VibesearchingPage implements OnInit {
       page: Math.floor(Math.random() * 5) + 1
     };
 
-    // Genres basierend auf Stimmung
+    // Genres basierend auf Stimmuuuuung
     if (this.selectedMood && this.moodToGenreMap[this.selectedMood]) {
       discoverParams.with_genres = this.moodToGenreMap[this.selectedMood].join('|');
     }
 
-    // Filmdauer mit angepassten Qualitätsfiltern
+    // Filmdauer mit angepassten filtern
     if (this.selectedDuration === 'shortfilm') {
       discoverParams['with_runtime.lte'] = 40;
-      // Reduzierte Filterkriterien für Kurzfilme
+      // Reduzierte Filterkriterien für Kurzfilme weil sonst kaputt(also geht in den Fallback weil er keine Treffer hat)
       discoverParams.vote_average_gte = 6.0;  // Niedrigere Mindestbewertung
       discoverParams.vote_count_gte = 20;     // Deutlich weniger Bewertungen erforderlich
+
     } else if (this.selectedDuration === 'short') {
       discoverParams['with_runtime.gte'] = 40;
       discoverParams['with_runtime.lte'] = 90;
@@ -128,7 +129,7 @@ export class VibesearchingPage implements OnInit {
 
     // Bewertungsbeschränkungen optimieren für relevantere Ergebnisse
     discoverParams.vote_average_gte = 7.0;  // Mindestens 7.0/10
-    discoverParams.vote_average_lte = 9.0;  // Maximal 9.0/10
+    discoverParams.vote_average_lte = 9.0;  // Maximal 9.0/10 -> bei 10/10 sind die Treffer etwas shady
     discoverParams.vote_count_gte = 200;    // Mehr Bewertungen für bessere Aussagekraft
   
     // Sortierung: höher bewertete Filme bevorzugen, aber nicht ausschließlich
@@ -141,8 +142,8 @@ export class VibesearchingPage implements OnInit {
       discoverParams.sort_by = 'vote_average.desc';
     } else {
       // Standard: Kombination aus Bewertung und Beliebtheit
-      // Die TMDB-API hat keine direkte Kombination, also wählen wir Popularität
-      // und filtern dann im Code die gut bewerteten
+      // Die TMDB-API hat keine direkte Kombination,  wir nehmen Popularität
+      // und filtern dann im Code die gut bewerteten raus
       discoverParams.sort_by = 'popularity.desc';
     }
 
@@ -183,7 +184,7 @@ export class VibesearchingPage implements OnInit {
 
   // Fallback-Methode wenn keine Ergebnisse gefunden werden
   loadFallbackResults() {
-    // Wenn nach Kurzfilmen gesucht wurde, spezialisierten Fallback verwenden
+    // Wenn nach Kurzfilmen gesucht wurde, spezialisierten Fallback verwenden-> siehe oben
     if (this.selectedDuration === 'shortfilm') {
       const fallbackParams: any = {
         'with_runtime.lte': 40,
@@ -282,8 +283,8 @@ export class VibesearchingPage implements OnInit {
       (res) => {
         if (res.results && res.results.length > 0) {
           this.results = this.getRandomSubset(res.results, 6);
-          this.loadProvidersForMovies(); // Provider laden
-          this.loadFavoritesSet(); // Favoriten-Flags setzen
+          this.loadProvidersForMovies(); 
+          this.loadFavoritesSet(); 
           this.loadWatchedMovies(); 
         } else {
           this.loadFallbackResults();
@@ -367,7 +368,7 @@ export class VibesearchingPage implements OnInit {
     );
   }
 
-  // Helper-Methode, um nur für einen einzelnen Film Provider zu laden
+  // Helper-Methode um nur für einen einzelnen Film Provider zu laden
   loadProviderForMovie(movie: any) {
     const countryCode = 'DE';
     
@@ -393,7 +394,7 @@ export class VibesearchingPage implements OnInit {
 
   // Methode um Provider für alle Filme zu laden
   loadProvidersForMovies() {
-    // Load providers for all movies in the results array
+    
     if (!this.results || this.results.length === 0) return;
     
     this.results.forEach(movie => {
@@ -404,7 +405,7 @@ export class VibesearchingPage implements OnInit {
   // Favoriten-Helper
   async loadFavoritesSet() {
     try {
-      const ids = await this.prefs.getFavorites(); // erwartet number[]
+      const ids = await this.prefs.getFavorites(); 
       this.favoriteIdSet = new Set(ids || []);
       (this.results || []).forEach(m => m.favorite = this.favoriteIdSet.has(m.id));
     } catch (e) {
@@ -432,7 +433,7 @@ export class VibesearchingPage implements OnInit {
       this.favoriteIdSet = new Set(ids || []);
       movie.favorite = this.favoriteIdSet.has(movie.id);
 
-      // Stamp kurz anzeigen, wenn gerade als Favorit markiert
+      // Stamp kurz anzeigen wenn gerade als Favorit markiert
       if (movie.favorite) {
         movie.showFavoriteStamp = true;
         if ((movie as any)._stampTimeout) {
@@ -443,7 +444,7 @@ export class VibesearchingPage implements OnInit {
           delete (movie as any)._stampTimeout;
         }, 1500);
       } else {
-        // falls entfavorisiert, Stamp sofort ausblenden
+        // falls entfavorisiert Stamp sofort ausblenden
         movie.showFavoriteStamp = false;
         if ((movie as any)._stampTimeout) {
           clearTimeout((movie as any)._stampTimeout);
@@ -462,28 +463,21 @@ export class VibesearchingPage implements OnInit {
     try {
       // Wenn der Film noch nicht als gesehen markiert ist
       if (!this.watchedIdSet.has(movie.id)) {
-        // Zu gesehen hinzufügen
+    
         await this.prefs.addToHistory(movie.id);
-        
-        // Watched-Status aktualisieren
         await this.loadWatchedMovies();
-        
-        // Fade-Animation starten
         movie.fading = true;
         
         // Nach der Animation neuen Film laden
         setTimeout(() => {
-          // Index des Films finden
           const index = this.results.findIndex(m => m.id === movie.id);
           if (index !== -1) {
-            // Film durch einen neuen ersetzen
             this.replaceMovie(index);
           }
         }, 600);
       } 
       // Falls der Film bereits als gesehen markiert war und entfernt werden soll
       else {
-        // Aus gesehen entfernen
         await this.prefs.removeFromHistory(movie.id);
         
         // Watched-Status aktualisieren

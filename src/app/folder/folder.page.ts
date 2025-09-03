@@ -457,7 +457,7 @@ export class FolderPage implements OnInit, OnDestroy {
           break;
         case 'top-rated':
           options['sort_by'] = 'vote_average.desc';
-          options['vote_count.gte'] = options['vote_count.gte'] || 200; // Mindestanzahl Stimmen
+          options['vote_count.gte'] = options['vote_count.gte'] || 200; // Mindestanzahl an Bewertungen
           break;
         case 'trending':
           options['sort_by'] = 'popularity.desc';

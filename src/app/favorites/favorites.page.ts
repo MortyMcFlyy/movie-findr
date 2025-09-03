@@ -70,7 +70,7 @@ export class FavoritesPage implements OnInit {
 
   async onToggleFavorite(id: number) {
     await this.preferences.toggleFavorite(id);
-    await this.loadFavorites(); // Liste aktualisieren
+    await this.loadFavorites(); 
   }
 
 
