@@ -284,7 +284,7 @@ export class VibesearchingPage implements OnInit {
           this.results = this.getRandomSubset(res.results, 6);
           this.loadProvidersForMovies(); // Provider laden
           this.loadFavoritesSet(); // Favoriten-Flags setzen
-          this.loadWatchedMovies(); // Add this line
+          this.loadWatchedMovies(); 
         } else {
           this.loadFallbackResults();
         }
@@ -455,7 +455,7 @@ export class VibesearchingPage implements OnInit {
     }
   }
 
-  // Add the implementation of onMarkWatched
+
   async onMarkWatched(movie: any, event: Event) {
     event.stopPropagation();
     
