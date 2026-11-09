@@ -15,7 +15,11 @@
     "android:sync": "cap sync android",
     "android:run": "cap run android",
     "android:dev": "npm run android:build && npm run android:copy && npm run android:run",
-    "android:dev:sync": "npm run android:build && npm run android:sync && npm run android:run"
+    "android:dev:sync": "npm run android:build && npm run android:sync && npm run android:run",
+    "ios:build": "ng build",
+    "ios:sync": "cap sync ios",
+    "ios:open": "cap open ios",
+    "ios:dev": "npm run ios:build && npm run ios:sync && npm run ios:open"
   },
   "private": true,
   "dependencies": {
@@ -32,6 +36,7 @@
     "@capacitor/core": "^7.4.3",
     "@capacitor/geolocation": "^7.1.5",
     "@capacitor/haptics": "7.0.1",
+    "@capacitor/ios": "^7.4.3",
     "@capacitor/keyboard": "7.0.1",
     "@capacitor/preferences": "^7.0.2",
     "@capacitor/status-bar": "7.0.1",

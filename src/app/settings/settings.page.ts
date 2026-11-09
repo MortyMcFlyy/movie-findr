@@ -95,7 +95,7 @@ export class SettingsPage implements OnInit {
     try {
       await NativeSettings.open({
         optionAndroid: AndroidSettings.ApplicationDetails,
-        optionIOS: IOSSettings.About
+        optionIOS: IOSSettings.App
       });
     } catch (e) {
       console.warn('could not open native settings', e);
