@@ -5,23 +5,16 @@ description: Grill the user relentlessly about a plan, decision, or idea. Use wh
 
 Interview the user relentlessly until you reach a shared understanding. Map this as a **design tree**: every decision branches into the decisions that hang off it.
 
-Work the tree in **rounds**. The **frontier** is every decision whose prerequisites are already settled: the questions you can ask _now_ without guessing at answers you haven't heard yet. Ask the whole frontier in one round: number each question and give your recommended answer. Then wait for the user's answers before the next round.
+Work the tree in **rounds**. The **frontier** is every decision whose prerequisites are already settled: the questions you can ask _now_ without guessing at answers you haven't heard yet. Ask the whole frontier in one round, then wait for the user's answers before the next round.
 
-Format a round like so:
+Ask each round with the `AskUserQuestion` tool, not as plain text:
 
-```
-❓ **Q1** - **<question title>**: <question body, might be multiple paragraphs, including multiple choices>
-
-➡️ <your recommended answer>
-
----
-
-❓ **Q2** - **<question title>**: <question body, might be multiple paragraphs, including multiple choices>
-
-➡️ <your recommended answer>
-```
-
-Word each question so "yes" accepts your recommended answer.
+- One tool question per frontier decision. The tool takes at most 4 questions per call; if the frontier is larger, ask it in several consecutive calls.
+- Give 2–4 concrete options per question. Put your recommended option first and append " (Recommended)" to its label. Don't add an "Other" option; the tool provides one automatically.
+- Use each option's `description` for trade-offs and consequences. Keep `header` at most 12 characters.
+- Make each question self-contained: the user may see only the dialog, not text you wrote before it. Put needed context (facts you found, why it matters) in the question text.
+- Use `preview` when options are concrete artifacts worth comparing side by side (config snippets, folder layouts, code).
+- If a decision is genuinely open-ended and can't be reduced to options (e.g. "which version is installed?"), ask it as plain text in the same round instead.
 
 Each round the user answers reshapes the tree: settled decisions push the frontier outward and unblock questions that depended on them. Recompute the frontier and ask the next round. A question whose answer depends on another question still open in this round belongs to a _later_ round, not this one.
 

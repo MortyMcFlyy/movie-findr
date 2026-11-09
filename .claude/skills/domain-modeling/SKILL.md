@@ -45,6 +45,8 @@ Create files lazily: only when you have something to write. If no `GLOSSARY.md` 
 
 When the user uses a term that conflicts with the existing language in `GLOSSARY.md`, call it out immediately. "Your glossary defines 'cancellation' as X, but you seem to mean Y. Which is it?"
 
+Whenever you put such a choice to the user (conflicting terms, competing canonical names, whether to write an ADR), ask it with the `AskUserQuestion` tool, one option per alternative, recommended option first with " (Recommended)". If a grilling round is in progress, add it to that round's questions instead of asking separately.
+
 ### Sharpen fuzzy language
 
 When the user uses vague or overloaded terms, propose a precise canonical term. "You're saying 'account': do you mean the Customer or the User? Those are different things."
